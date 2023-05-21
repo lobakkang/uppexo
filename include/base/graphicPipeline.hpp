@@ -6,6 +6,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <base/descriptor.hpp>
 #include <base/device.hpp>
 #include <base/renderpass.hpp>
 
@@ -15,8 +16,11 @@ struct GraphicPipelineBlueprint {
   std::string FragmentShader = "./main.fs";
   std::vector<VkVertexInputBindingDescription> bindingDescription;
   std::vector<VkVertexInputAttributeDescription> attributeDescription;
+  bool isDepthEnable = false;
   VkDevice device;
   VkRenderPass renderpass;
+
+  DescriptorSet *descriptorSet;
 
   GraphicPipelineBlueprint() = default;
   GraphicPipelineBlueprint(Device &device, Renderpass &renderpass) {
@@ -24,6 +28,16 @@ struct GraphicPipelineBlueprint {
     attributeDescription = FullVertex::getAttributeDescriptions();
     this->device = device.getLogicalDevice();
     this->renderpass = renderpass.getRenderPass();
+    this->descriptorSet = nullptr;
+  }
+
+  GraphicPipelineBlueprint(Device &device, Renderpass &renderpass,
+                           DescriptorSet &descriptor) {
+    bindingDescription = FullVertex::getBindingDescription();
+    attributeDescription = FullVertex::getAttributeDescriptions();
+    this->device = device.getLogicalDevice();
+    this->renderpass = renderpass.getRenderPass();
+    this->descriptorSet = &descriptor;
   }
 };
 
@@ -32,6 +46,7 @@ public:
   GraphicPipeline(GraphicPipelineBlueprint pipelineBlueprint);
   ~GraphicPipeline();
   VkPipeline getPipeline();
+  VkPipelineLayout getLayout();
 
 private:
   VkDevice deviceHandle;

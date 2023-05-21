@@ -9,13 +9,11 @@ uppexo::Framebuffer::Framebuffer(
   framebuffer.resize(framebufferBlueprint.imageView.size());
 
   for (size_t i = 0; i < framebufferBlueprint.imageView.size(); i++) {
-    VkImageView attachments[] = {framebufferBlueprint.imageView[i]};
-
     VkFramebufferCreateInfo framebufferInfo{};
     framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     framebufferInfo.renderPass = framebufferBlueprint.renderpass;
-    framebufferInfo.attachmentCount = 1;
-    framebufferInfo.pAttachments = attachments;
+    framebufferInfo.attachmentCount = 2;
+    framebufferInfo.pAttachments = framebufferBlueprint.imageView[i].data();
     framebufferInfo.width = framebufferBlueprint.extend.width;
     framebufferInfo.height = framebufferBlueprint.extend.height;
     framebufferInfo.layers = 1;

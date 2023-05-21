@@ -57,13 +57,23 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /media/linux_extend/new_github/uppexo
+CMAKE_SOURCE_DIR = /home/lobakkang/active_github/uppexo
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /media/linux_extend/new_github/uppexo
+CMAKE_BINARY_DIR = /home/lobakkang/active_github/uppexo
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -85,11 +95,56 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/linux_extend/new_github/uppexo/CMakeFiles /media/linux_extend/new_github/uppexo//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/lobakkang/active_github/uppexo/CMakeFiles /home/lobakkang/active_github/uppexo//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/linux_extend/new_github/uppexo/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/lobakkang/active_github/uppexo/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,6 +172,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named Shaders
+
+# Build rule for target.
+Shaders: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Shaders
+.PHONY : Shaders
+
+# fast build rule for target.
+Shaders/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Shaders.dir/build.make CMakeFiles/Shaders.dir/build
+.PHONY : Shaders/fast
+
+#=============================================================================
 # Target rules for targets named uppexo
 
 # Build rule for target.
@@ -141,6 +209,45 @@ uppexo_demo: cmake_check_build_system
 uppexo_demo/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo_demo.dir/build.make CMakeFiles/uppexo_demo.dir/build
 .PHONY : uppexo_demo/fast
+
+#=============================================================================
+# Target rules for targets named forward_rendering
+
+# Build rule for target.
+forward_rendering: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 forward_rendering
+.PHONY : forward_rendering
+
+# fast build rule for target.
+forward_rendering/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/forward_rendering.dir/build.make CMakeFiles/forward_rendering.dir/build
+.PHONY : forward_rendering/fast
+
+#=============================================================================
+# Target rules for targets named tinyobjloader
+
+# Build rule for target.
+tinyobjloader: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tinyobjloader
+.PHONY : tinyobjloader
+
+# fast build rule for target.
+tinyobjloader/fast:
+	$(MAKE) $(MAKESILENT) -f third_party/obj/CMakeFiles/tinyobjloader.dir/build.make third_party/obj/CMakeFiles/tinyobjloader.dir/build
+.PHONY : tinyobjloader/fast
+
+#=============================================================================
+# Target rules for targets named uninstall
+
+# Build rule for target.
+uninstall: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 uninstall
+.PHONY : uninstall
+
+# fast build rule for target.
+uninstall/fast:
+	$(MAKE) $(MAKESILENT) -f third_party/obj/CMakeFiles/uninstall.dir/build.make third_party/obj/CMakeFiles/uninstall.dir/build
+.PHONY : uninstall/fast
 
 demo/main.o: demo/main.cpp.o
 .PHONY : demo/main.o
@@ -214,6 +321,30 @@ src/base/commandbuffer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/commandbuffer.cpp.s
 .PHONY : src/base/commandbuffer.cpp.s
 
+src/base/descriptor.o: src/base/descriptor.cpp.o
+.PHONY : src/base/descriptor.o
+
+# target to build an object file
+src/base/descriptor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/descriptor.cpp.o
+.PHONY : src/base/descriptor.cpp.o
+
+src/base/descriptor.i: src/base/descriptor.cpp.i
+.PHONY : src/base/descriptor.i
+
+# target to preprocess a source file
+src/base/descriptor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/descriptor.cpp.i
+.PHONY : src/base/descriptor.cpp.i
+
+src/base/descriptor.s: src/base/descriptor.cpp.s
+.PHONY : src/base/descriptor.s
+
+# target to generate assembly for a file
+src/base/descriptor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/descriptor.cpp.s
+.PHONY : src/base/descriptor.cpp.s
+
 src/base/device.o: src/base/device.cpp.o
 .PHONY : src/base/device.o
 
@@ -286,6 +417,30 @@ src/base/graphicPipeline.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/graphicPipeline.cpp.s
 .PHONY : src/base/graphicPipeline.cpp.s
 
+src/base/image.o: src/base/image.cpp.o
+.PHONY : src/base/image.o
+
+# target to build an object file
+src/base/image.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/image.cpp.o
+.PHONY : src/base/image.cpp.o
+
+src/base/image.i: src/base/image.cpp.i
+.PHONY : src/base/image.i
+
+# target to preprocess a source file
+src/base/image.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/image.cpp.i
+.PHONY : src/base/image.cpp.i
+
+src/base/image.s: src/base/image.cpp.s
+.PHONY : src/base/image.s
+
+# target to generate assembly for a file
+src/base/image.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/image.cpp.s
+.PHONY : src/base/image.cpp.s
+
 src/base/instance.o: src/base/instance.cpp.o
 .PHONY : src/base/instance.o
 
@@ -333,6 +488,30 @@ src/base/renderpass.s: src/base/renderpass.cpp.s
 src/base/renderpass.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/renderpass.cpp.s
 .PHONY : src/base/renderpass.cpp.s
+
+src/base/sampler.o: src/base/sampler.cpp.o
+.PHONY : src/base/sampler.o
+
+# target to build an object file
+src/base/sampler.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/sampler.cpp.o
+.PHONY : src/base/sampler.cpp.o
+
+src/base/sampler.i: src/base/sampler.cpp.i
+.PHONY : src/base/sampler.i
+
+# target to preprocess a source file
+src/base/sampler.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/sampler.cpp.i
+.PHONY : src/base/sampler.cpp.i
+
+src/base/sampler.s: src/base/sampler.cpp.s
+.PHONY : src/base/sampler.s
+
+# target to generate assembly for a file
+src/base/sampler.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/sampler.cpp.s
+.PHONY : src/base/sampler.cpp.s
 
 src/base/shader.o: src/base/shader.cpp.o
 .PHONY : src/base/shader.o
@@ -406,6 +585,30 @@ src/core/commandBufferRecorder.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/commandBufferRecorder.cpp.s
 .PHONY : src/core/commandBufferRecorder.cpp.s
 
+src/core/datatype.o: src/core/datatype.cpp.o
+.PHONY : src/core/datatype.o
+
+# target to build an object file
+src/core/datatype.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/datatype.cpp.o
+.PHONY : src/core/datatype.cpp.o
+
+src/core/datatype.i: src/core/datatype.cpp.i
+.PHONY : src/core/datatype.i
+
+# target to preprocess a source file
+src/core/datatype.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/datatype.cpp.i
+.PHONY : src/core/datatype.cpp.i
+
+src/core/datatype.s: src/core/datatype.cpp.s
+.PHONY : src/core/datatype.s
+
+# target to generate assembly for a file
+src/core/datatype.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/datatype.cpp.s
+.PHONY : src/core/datatype.cpp.s
+
 src/core/mesh.o: src/core/mesh.cpp.o
 .PHONY : src/core/mesh.o
 
@@ -429,6 +632,30 @@ src/core/mesh.s: src/core/mesh.cpp.s
 src/core/mesh.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/mesh.cpp.s
 .PHONY : src/core/mesh.cpp.s
+
+src/engine/compute.o: src/engine/compute.cpp.o
+.PHONY : src/engine/compute.o
+
+# target to build an object file
+src/engine/compute.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/compute.cpp.o
+.PHONY : src/engine/compute.cpp.o
+
+src/engine/compute.i: src/engine/compute.cpp.i
+.PHONY : src/engine/compute.i
+
+# target to preprocess a source file
+src/engine/compute.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/compute.cpp.i
+.PHONY : src/engine/compute.cpp.i
+
+src/engine/compute.s: src/engine/compute.cpp.s
+.PHONY : src/engine/compute.s
+
+# target to generate assembly for a file
+src/engine/compute.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/compute.cpp.s
+.PHONY : src/engine/compute.cpp.s
 
 src/engine/deferred.o: src/engine/deferred.cpp.o
 .PHONY : src/engine/deferred.o
@@ -598,6 +825,30 @@ src/utils/vulkan_util.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/utils/vulkan_util.cpp.s
 .PHONY : src/utils/vulkan_util.cpp.s
 
+tests/forward_rendering.o: tests/forward_rendering.cpp.o
+.PHONY : tests/forward_rendering.o
+
+# target to build an object file
+tests/forward_rendering.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/forward_rendering.dir/build.make CMakeFiles/forward_rendering.dir/tests/forward_rendering.cpp.o
+.PHONY : tests/forward_rendering.cpp.o
+
+tests/forward_rendering.i: tests/forward_rendering.cpp.i
+.PHONY : tests/forward_rendering.i
+
+# target to preprocess a source file
+tests/forward_rendering.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/forward_rendering.dir/build.make CMakeFiles/forward_rendering.dir/tests/forward_rendering.cpp.i
+.PHONY : tests/forward_rendering.cpp.i
+
+tests/forward_rendering.s: tests/forward_rendering.cpp.s
+.PHONY : tests/forward_rendering.s
+
+# target to generate assembly for a file
+tests/forward_rendering.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/forward_rendering.dir/build.make CMakeFiles/forward_rendering.dir/tests/forward_rendering.cpp.s
+.PHONY : tests/forward_rendering.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -605,7 +856,16 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... test"
+	@echo "... Shaders"
+	@echo "... uninstall"
+	@echo "... forward_rendering"
+	@echo "... tinyobjloader"
 	@echo "... uppexo"
 	@echo "... uppexo_demo"
 	@echo "... demo/main.o"
@@ -617,6 +877,9 @@ help:
 	@echo "... src/base/commandbuffer.o"
 	@echo "... src/base/commandbuffer.i"
 	@echo "... src/base/commandbuffer.s"
+	@echo "... src/base/descriptor.o"
+	@echo "... src/base/descriptor.i"
+	@echo "... src/base/descriptor.s"
 	@echo "... src/base/device.o"
 	@echo "... src/base/device.i"
 	@echo "... src/base/device.s"
@@ -626,12 +889,18 @@ help:
 	@echo "... src/base/graphicPipeline.o"
 	@echo "... src/base/graphicPipeline.i"
 	@echo "... src/base/graphicPipeline.s"
+	@echo "... src/base/image.o"
+	@echo "... src/base/image.i"
+	@echo "... src/base/image.s"
 	@echo "... src/base/instance.o"
 	@echo "... src/base/instance.i"
 	@echo "... src/base/instance.s"
 	@echo "... src/base/renderpass.o"
 	@echo "... src/base/renderpass.i"
 	@echo "... src/base/renderpass.s"
+	@echo "... src/base/sampler.o"
+	@echo "... src/base/sampler.i"
+	@echo "... src/base/sampler.s"
 	@echo "... src/base/shader.o"
 	@echo "... src/base/shader.i"
 	@echo "... src/base/shader.s"
@@ -641,9 +910,15 @@ help:
 	@echo "... src/core/commandBufferRecorder.o"
 	@echo "... src/core/commandBufferRecorder.i"
 	@echo "... src/core/commandBufferRecorder.s"
+	@echo "... src/core/datatype.o"
+	@echo "... src/core/datatype.i"
+	@echo "... src/core/datatype.s"
 	@echo "... src/core/mesh.o"
 	@echo "... src/core/mesh.i"
 	@echo "... src/core/mesh.s"
+	@echo "... src/engine/compute.o"
+	@echo "... src/engine/compute.i"
+	@echo "... src/engine/compute.s"
 	@echo "... src/engine/deferred.o"
 	@echo "... src/engine/deferred.i"
 	@echo "... src/engine/deferred.s"
@@ -665,6 +940,9 @@ help:
 	@echo "... src/utils/vulkan_util.o"
 	@echo "... src/utils/vulkan_util.i"
 	@echo "... src/utils/vulkan_util.s"
+	@echo "... tests/forward_rendering.o"
+	@echo "... tests/forward_rendering.i"
+	@echo "... tests/forward_rendering.s"
 .PHONY : help
 
 

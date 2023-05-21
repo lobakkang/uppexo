@@ -37,6 +37,13 @@ public:
     return obj;
   }
 
+  template <typename T> inline T &getComponent(int id) {
+    return *static_cast<T *>(componentList[id].get());
+  }
+
+  std::function<void(Derived &)> earlyLoopFunction;
+  std::function<void(Derived &)> endLoopFunction;
+
 protected:
   virtual void buildComponent() {
     uppexo::Log::GetInstance().logError(
@@ -49,13 +56,10 @@ protected:
         "FAULT)\n");
   }
 
-  template <typename T> inline T &getComponent(int id) {
-    return *static_cast<T *>(componentList[id].get());
-  }
-
-  template <typename Ta, typename Tb> inline void addComponent(Tb blueprint) {
+  template <typename Ta, typename Tb> inline int addComponent(Tb blueprint) {
     componentList.emplace_back(new Ta(blueprint),
                                [](void *p) { delete static_cast<Ta *>(p); });
+    return componentList.size() - 1;
   }
 
   std::vector<std::unique_ptr<void, void (*)(void *)>> componentList;

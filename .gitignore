@@ -37,5 +37,16 @@ compile_commands.json
 uppexo_demo
 renderdoc.cap
 CMakeFiles/*
+shaders/*
 *.vs
 *.fs
+
+install_manifest.txt
+*.vim
+include/generated/*
+Testing
+
+.cache
+.gdb_history
+
+CTestTestfile.cmake

@@ -148,3 +148,66 @@ std::string uppexo::MemoryPropertyFlagsToString(VkMemoryPropertyFlags flags) {
 
   return result;
 }
+
+std::string uppexo::BufferLocationToString(uppexo::BufferLocation location) {
+  switch (location) {
+  case uppexo::BufferLocation::ON_DEVICE_VISIBLE_TO_HOST:
+    return "ON DEVICE VISIBLE TO HOST";
+    break;
+  case uppexo::BufferLocation::ON_DEVICE_INVISIBLE_TO_HOST:
+    return "ON DEVICE INVISIBLE TO HOST";
+    break;
+  case uppexo::BufferLocation::ON_HOST_VISIBLE_TO_DEVICE:
+    return "ON HOST VISIBLE TO DEVICE";
+    break;
+  default:
+    return "UNKNOWN";
+    break;
+  }
+}
+
+VkFormat uppexo::findSupportedFormat(const std::vector<VkFormat> &candidates,
+                                     VkImageTiling tiling,
+                                     VkFormatFeatureFlags features,
+                                     VkPhysicalDevice physicalDevice) {
+  for (VkFormat format : candidates) {
+    VkFormatProperties props;
+    vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
+
+    if (tiling == VK_IMAGE_TILING_LINEAR &&
+        (props.linearTilingFeatures & features) == features) {
+      return format;
+    } else if (tiling == VK_IMAGE_TILING_OPTIMAL &&
+               (props.optimalTilingFeatures & features) == features) {
+      return format;
+    }
+  }
+
+  uppexo::Log::GetInstance().logError("Failed to find supported format\n");
+  return candidates[0];
+}
+
+VkFormat uppexo::findDepthFormat(VkPhysicalDevice physicalDevice) {
+  return uppexo::findSupportedFormat(
+      {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
+       VK_FORMAT_D24_UNORM_S8_UINT},
+      VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT,
+      physicalDevice);
+}
+
+uint32_t uppexo::findMemoryType(uint32_t typeFilter,
+                                VkMemoryPropertyFlags properties,
+                                VkPhysicalDevice physicalDevice) {
+  VkPhysicalDeviceMemoryProperties memProperties;
+  vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+
+  for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+    if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags &
+                                    properties) == properties) {
+      return i;
+    }
+  }
+
+  uppexo::Log::GetInstance().logError("Failed to find suitable memory type\n");
+  return 0;
+}

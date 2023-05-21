@@ -60,8 +60,8 @@ uppexo::GraphicPipeline::GraphicPipeline(
   rasterizer.rasterizerDiscardEnable = VK_FALSE;
   rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
   rasterizer.lineWidth = 1.0f;
-  rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-  rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+  rasterizer.cullMode = VK_CULL_MODE_NONE;
+  rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
   rasterizer.depthBiasEnable = VK_FALSE;
 
   VkPipelineMultisampleStateCreateInfo multisampling{};
@@ -69,6 +69,15 @@ uppexo::GraphicPipeline::GraphicPipeline(
       VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
   multisampling.sampleShadingEnable = VK_FALSE;
   multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+  VkPipelineDepthStencilStateCreateInfo depthStencil{};
+  depthStencil.sType =
+      VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+  depthStencil.depthTestEnable = VK_TRUE;
+  depthStencil.depthWriteEnable = VK_TRUE;
+  depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+  depthStencil.depthBoundsTestEnable = VK_FALSE;
+  depthStencil.stencilTestEnable = VK_FALSE;
 
   VkPipelineColorBlendAttachmentState colorBlendAttachment{};
   colorBlendAttachment.colorWriteMask =
@@ -97,7 +106,15 @@ uppexo::GraphicPipeline::GraphicPipeline(
 
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-  pipelineLayoutInfo.setLayoutCount = 0;
+  if (pipelineBlueprint.descriptorSet != nullptr) {
+    pipelineLayoutInfo.setLayoutCount =
+        pipelineBlueprint.descriptorSet->getLayout().size();
+    pipelineLayoutInfo.pSetLayouts =
+        pipelineBlueprint.descriptorSet->getLayout().data();
+  } else {
+    pipelineLayoutInfo.setLayoutCount = 0;
+  }
+
   pipelineLayoutInfo.pushConstantRangeCount = 0;
 
   uppexo::Log::GetInstance().logVerbose("Creating graphic pipeline layout\n");
@@ -116,6 +133,9 @@ uppexo::GraphicPipeline::GraphicPipeline(
   pipelineInfo.pViewportState = &viewportState;
   pipelineInfo.pRasterizationState = &rasterizer;
   pipelineInfo.pMultisampleState = &multisampling;
+  if (pipelineBlueprint.isDepthEnable) {
+    pipelineInfo.pDepthStencilState = &depthStencil;
+  }
   pipelineInfo.pColorBlendState = &colorBlending;
   pipelineInfo.pDynamicState = &dynamicState;
   pipelineInfo.layout = pipelineLayout;
@@ -131,6 +151,10 @@ uppexo::GraphicPipeline::GraphicPipeline(
   uppexo::Log::GetInstance().logVerbose("Destroying shader modules\n");
   vkDestroyShaderModule(deviceHandle, fragShaderModule, nullptr);
   vkDestroyShaderModule(deviceHandle, vertShaderModule, nullptr);
+
+  if (pipelineBlueprint.descriptorSet != nullptr) {
+    pipelineBlueprint.descriptorSet->update();
+  }
 }
 
 uppexo::GraphicPipeline::~GraphicPipeline() {
@@ -140,3 +164,4 @@ uppexo::GraphicPipeline::~GraphicPipeline() {
 }
 
 VkPipeline uppexo::GraphicPipeline::getPipeline() { return pipeline; }
+VkPipelineLayout uppexo::GraphicPipeline::getLayout() { return pipelineLayout; }

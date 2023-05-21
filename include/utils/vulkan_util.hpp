@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <vector>
+#include <base/buffer.hpp>
 
 const std::vector<const char *> validationLayers = {
     "VK_LAYER_KHRONOS_validation"};
@@ -22,6 +23,13 @@ VkShaderModule createShaderModule(VkDevice device,
                                   const std::vector<char> &code);
 std::vector<char> readFile(std::string filename);
 std::string MemoryPropertyFlagsToString(VkMemoryPropertyFlags flags);
+std::string BufferLocationToString(BufferLocation location);
+VkFormat findSupportedFormat(const std::vector<VkFormat> &candidates,
+                             VkImageTiling tiling,
+                             VkFormatFeatureFlags features,
+                             VkPhysicalDevice physicalDevice);
+VkFormat findDepthFormat(VkPhysicalDevice physicalDevice);
+uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice physicalDevice);
 }; // namespace uppexo
 
 #endif /* end of include guard: VULKAN_UTIL_H */

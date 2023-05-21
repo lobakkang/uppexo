@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <utils/log.hpp>
+
 #include <base/device.hpp>
 #include <base/renderpass.hpp>
 
@@ -12,16 +14,27 @@
 namespace uppexo {
 struct FramebufferBlueprint {
   VkRenderPass renderpass;
-  std::vector<VkImageView> imageView;
+  std::vector<std::vector<VkImageView>> imageView;
   VkExtent2D extend;
   VkDevice device;
 
   FramebufferBlueprint() = default;
   FramebufferBlueprint(Device &device, Renderpass &renderpass) {
+    this->imageView.resize(device.getSwapChainImageView().size());
     this->device = device.getLogicalDevice();
     this->extend = device.getSwapChainExtend();
-    this->imageView = device.getSwapChainImageView();
+    int i = 0;
+    for (VkImageView &view : device.getSwapChainImageView()) {
+      this->imageView[i] = {view};
+      i++;
+    }
     this->renderpass = renderpass.getRenderPass();
+  }
+
+  void addImageView(VkImageView imageView) {
+    for (int i = 0; i < this->imageView.size(); i++) {
+      this->imageView[i].push_back(imageView);
+    }
   }
 };
 

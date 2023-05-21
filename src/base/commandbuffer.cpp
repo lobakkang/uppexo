@@ -6,6 +6,7 @@ uppexo::CommandBuffer::CommandBuffer(
     uppexo::CommandBufferBlueprint commandBufferBlueprint) {
   uppexo::Log::GetInstance().logInfo("Creating command buffer\n");
   deviceHandle = commandBufferBlueprint.device;
+  commandQueue = commandBufferBlueprint.commandQueue;
 
   VkCommandPoolCreateInfo poolInfo{};
   poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -42,29 +43,35 @@ VkCommandBuffer &uppexo::CommandBuffer::getBuffer(int id) {
   return commandBuffer[id];
 }
 
-/*void uppexo::CommandBuffer::submitBuffer(int id, VkSemaphore semaphore,
-                                         VkPipelineStageFlags pipelineStage) {
+VkCommandBuffer uppexo::CommandBuffer::createSingleUseCommandBuffer() {
+  VkCommandBufferAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandPool = commandPool;
+  allocInfo.commandBufferCount = 1;
+
+  VkCommandBuffer commandBuffer;
+  vkAllocateCommandBuffers(deviceHandle, &allocInfo, &commandBuffer);
+  VkCommandBufferBeginInfo beginInfo{};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  vkBeginCommandBuffer(commandBuffer, &beginInfo);
+  // singleUseCommandBuffer.push_back(commandBuffer);
+
+  return commandBuffer;
+}
+
+void uppexo::CommandBuffer::submitSingleUseCommandBuffer(
+    VkCommandBuffer singleUseCommandBuffer) {
+  vkEndCommandBuffer(singleUseCommandBuffer);
+
   VkSubmitInfo submitInfo{};
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-  VkSemaphore waitSemaphores[] = {semaphore};
-  VkPipelineStageFlags waitStages[] = {
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-  submitInfo.waitSemaphoreCount = 1;
-  submitInfo.pWaitSemaphores = waitSemaphores;
-  submitInfo.pWaitDstStageMask = waitStages;
-
   submitInfo.commandBufferCount = 1;
-  submitInfo.pCommandBuffers = &commandBuffer[id];
+  submitInfo.pCommandBuffers = &singleUseCommandBuffer;
 
-  VkSemaphore signalSemaphores[] = {
-      synchronizer.getSemaphore(RENDER_FINISH_SEMAPHORE)};
-  submitInfo.signalSemaphoreCount = 1;
-  submitInfo.pSignalSemaphores = signalSemaphores;
+  vkQueueSubmit(commandQueue, 1, &submitInfo, VK_NULL_HANDLE);
+  vkQueueWaitIdle(commandQueue);
 
-  if (vkQueueSubmit(device.getQueue(uppexo::QueueType::graphic).queue[0], 1,
-                    &submitInfo, synchronizer.getFence(0)) != VK_SUCCESS) {
-    uppexo::Log::GetInstance().logError(
-        "Failed to submit draw command buffer!\n");
-  }
-}*/
+  vkFreeCommandBuffers(deviceHandle, commandPool, 1, &singleUseCommandBuffer);
+}

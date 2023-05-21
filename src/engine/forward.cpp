@@ -1,12 +1,21 @@
-#include "base/buffer.hpp"
-#include "core/commandBufferRecorder.hpp"
-#include "core/mesh.hpp"
 #include <algorithm>
 #include <any>
+#include <base/buffer.hpp>
+#include <base/commandbuffer.hpp>
+#include <base/descriptor.hpp>
+#include <base/device.hpp>
+#include <base/image.hpp>
+#include <base/renderpass.hpp>
+#include <base/sampler.hpp>
+#include <chrono>
 #include <component.hpp>
+#include <core/commandBufferRecorder.hpp>
+#include <core/datatype.hpp>
+#include <core/mesh.hpp>
 #include <cstdint>
 #include <engine/forward.hpp>
 #include <memory>
+#include <thread>
 #include <utility>
 #include <utils/log.hpp>
 #include <variant>
@@ -15,6 +24,9 @@
 #define FRAME_IN_FLIGHT 2
 #define IMAGE_AVAILABLE_SEMAPHORE 0
 #define RENDER_FINISH_SEMAPHORE 2
+
+#define UBO_1 2
+#define UBO_2 3
 
 uppexo::ForwardRenderingEngine::ForwardRenderingEngine(
     uppexo::ForwardRenderingEngineBlueprint forwardRenderingEngineBlueprint)
@@ -33,52 +45,109 @@ void uppexo::ForwardRenderingEngine::buildComponent() {
   instanceBlueprint.isGraphicEnable = true;
   instanceBlueprint.windowWidth = width;
   instanceBlueprint.windowHeight = height;
-  addComponent<uppexo::Instance>(instanceBlueprint); // 0
+  instanceID = addComponent<uppexo::Instance>(instanceBlueprint);
 
-  uppexo::DeviceBlueprint deviceBlueprint(getComponent<uppexo::Instance>(0));
-  addComponent<uppexo::Device>(deviceBlueprint); // 1
+  uppexo::DeviceBlueprint deviceBlueprint(
+      getComponent<uppexo::Instance>(instanceID));
+  deviceID = addComponent<uppexo::Device>(deviceBlueprint);
 
   uppexo::RenderpassBlueprint renderpassBlueprint(
-      getComponent<uppexo::Device>(1));
-  uppexo::AttachmentBlueprint colorAttachment;
+      getComponent<uppexo::Device>(deviceID));
+  uppexo::presetAttachmentBlueprint::SwapchainAttachment colorAttachment;
+  uppexo::presetAttachmentBlueprint::DepthAttachment depthAttachment(
+      getComponent<uppexo::Device>(deviceID).getPhysicalDevice());
   renderpassBlueprint.attachment.push_back(colorAttachment);
-  addComponent<uppexo::Renderpass>(renderpassBlueprint); // 2
+  renderpassBlueprint.attachment.push_back(depthAttachment);
+  uppexo::SubpassBlueprint subpassBlueprint;
+  subpassBlueprint.colourAttachment = {0};
+  subpassBlueprint.depthAttachment = 1;
+  renderpassBlueprint.subpass.push_back(subpassBlueprint);
+  renderPassID = addComponent<uppexo::Renderpass>(renderpassBlueprint);
 
-  uppexo::GraphicPipelineBlueprint graphicPipelineBlueprint(
-      getComponent<uppexo::Device>(1), getComponent<uppexo::Renderpass>(2));
-  graphicPipelineBlueprint.VertexShader = "./demo/shader.vs";
-  graphicPipelineBlueprint.FragmentShader = "./demo/shader.fs";
-  addComponent<uppexo::GraphicPipeline>(graphicPipelineBlueprint); // 3
+  uppexo::BufferBlueprint bufferBlueprint(
+      getComponent<uppexo::Device>(deviceID));
+  bufferBlueprint.cellList = {
+      uppexo::presetBufferCellBlueprint::VBO_at_host(
+          1024 * 1024 * sizeof(uppexo::FullVertex)),
+      uppexo::presetBufferCellBlueprint::IBO_at_device(1024 * 1024),
+      uppexo::presetBufferCellBlueprint::UBO_at_device(sizeof(uppexo::MVP)),
+      uppexo::presetBufferCellBlueprint::UBO_at_device(sizeof(uppexo::MVP))};
+  bufferID = addComponent<uppexo::Buffer>(bufferBlueprint);
 
-  uppexo::FramebufferBlueprint framebufferBlueprint(
-      getComponent<uppexo::Device>(1), getComponent<uppexo::Renderpass>(2));
-  addComponent<uppexo::Framebuffer>(framebufferBlueprint); // 4
+  uppexo::SamplerBlueprint samplerBlueprint(
+      getComponent<uppexo::Device>(deviceID));
+  samplerBlueprint.cellList = {uppexo::SamplerCellBlueprint()};
+  samplerID = addComponent<uppexo::Sampler>(samplerBlueprint);
 
   uppexo::CommandBufferBlueprint commandBufferBlueprint(
-      getComponent<uppexo::Device>(1));
+      getComponent<uppexo::Device>(deviceID));
   commandBufferBlueprint.bufferNum = FRAME_IN_FLIGHT;
-  addComponent<uppexo::CommandBuffer>(commandBufferBlueprint); // 5
+  commandBufferID = addComponent<uppexo::CommandBuffer>(commandBufferBlueprint);
+
+  uppexo::ImageBlueprint imageBlueprint(
+      getComponent<uppexo::Device>(deviceID),
+      getComponent<uppexo::Buffer>(bufferID),
+      getComponent<uppexo::CommandBuffer>(commandBufferID));
+  imageBlueprint.imageCellBlueprint = {
+      uppexo::presetImageCellBlueprint::DepthImageCellBlueprint(
+          getComponent<uppexo::Device>(deviceID).getPhysicalDevice()),
+      uppexo::presetImageCellBlueprint::TextureImageCellBlueprint(
+          "viking_room.png")};
+  imageID = addComponent<uppexo::Image>(imageBlueprint);
+
+  uppexo::FramebufferBlueprint framebufferBlueprint(
+      getComponent<uppexo::Device>(deviceID),
+      getComponent<uppexo::Renderpass>(renderPassID));
+  framebufferBlueprint.addImageView(
+      getComponent<uppexo::Image>(imageID).getImageView(0)[0]);
+  framebufferID = addComponent<uppexo::Framebuffer>(framebufferBlueprint);
+
+  uppexo::DescriptorSetBlueprint descriptorSetBlueprint(
+      getComponent<uppexo::Device>(deviceID));
+  descriptorSetBlueprint.binding = {
+      {uppexo::presetDescriptorSetBindingBlueprint::UBO_at_vertex_shader(
+           getComponent<uppexo::Buffer>(bufferID), UBO_1, sizeof(uppexo::MVP)),
+       uppexo::presetDescriptorSetBindingBlueprint::Sampler_at_fragment_shader(
+           getComponent<uppexo::Sampler>(samplerID),
+           getComponent<uppexo::Image>(imageID), 0, 1, 0)},
+      {uppexo::presetDescriptorSetBindingBlueprint::UBO_at_vertex_shader(
+           getComponent<uppexo::Buffer>(bufferID), UBO_2, sizeof(uppexo::MVP)),
+       uppexo::presetDescriptorSetBindingBlueprint::Sampler_at_fragment_shader(
+           getComponent<uppexo::Sampler>(samplerID),
+           getComponent<uppexo::Image>(imageID), 0, 1, 0)}};
+  descriptorID = addComponent<uppexo::DescriptorSet>(descriptorSetBlueprint);
+
+  uppexo::GraphicPipelineBlueprint graphicPipelineBlueprint(
+      getComponent<uppexo::Device>(deviceID),
+      getComponent<uppexo::Renderpass>(renderPassID),
+      getComponent<uppexo::DescriptorSet>(descriptorID));
+  graphicPipelineBlueprint.isDepthEnable = true;
+  graphicPipelineBlueprint.VertexShader = "./shaders/forwardShader.vert.spv";
+  graphicPipelineBlueprint.FragmentShader = "./shaders/forwardShader.frag.spv";
+  pipelineID = addComponent<uppexo::GraphicPipeline>(graphicPipelineBlueprint);
 
   uppexo::SynchronizerBlueprint synchronizerBlueprint(
-      getComponent<uppexo::Device>(1));
+      getComponent<uppexo::Device>(deviceID));
   synchronizerBlueprint.semaphore = 2 * FRAME_IN_FLIGHT;
   synchronizerBlueprint.fence = 1 * FRAME_IN_FLIGHT;
   synchronizerBlueprint.event = 0;
-  addComponent<uppexo::Synchronizer>(synchronizerBlueprint); // 6
-
-  uppexo::BufferBlueprint vertexBufferBlueprint(
-      getComponent<uppexo::Device>(1));
-  addComponent<uppexo::Buffer>(vertexBufferBlueprint); // 7
+  synchronizerID = addComponent<uppexo::Synchronizer>(synchronizerBlueprint);
 }
 
 void uppexo::ForwardRenderingEngine::prerecordCommandBuffer() {
   uppexo::Log::GetInstance().logInfo("Prerecording command buffer\n");
-  uppexo::CommandBuffer &commandBuffer = getComponent<uppexo::CommandBuffer>(5);
-  uppexo::Device &device = getComponent<uppexo::Device>(1);
-  uppexo::Renderpass &renderpass = getComponent<uppexo::Renderpass>(2);
-  uppexo::Framebuffer &framebuffer = getComponent<uppexo::Framebuffer>(4);
-  uppexo::GraphicPipeline &pipeline = getComponent<uppexo::GraphicPipeline>(3);
-  uppexo::Buffer &vertexBuffer = getComponent<uppexo::Buffer>(7);
+  uppexo::CommandBuffer &commandBuffer =
+      getComponent<uppexo::CommandBuffer>(commandBufferID);
+  uppexo::Device &device = getComponent<uppexo::Device>(deviceID);
+  uppexo::Renderpass &renderpass =
+      getComponent<uppexo::Renderpass>(renderPassID);
+  uppexo::Framebuffer &framebuffer =
+      getComponent<uppexo::Framebuffer>(framebufferID);
+  uppexo::GraphicPipeline &pipeline =
+      getComponent<uppexo::GraphicPipeline>(pipelineID);
+  uppexo::Buffer &buffer = getComponent<uppexo::Buffer>(bufferID);
+  uppexo::DescriptorSet &DescriptorSet =
+      getComponent<uppexo::DescriptorSet>(descriptorID);
 
   recorderList.push_back([&](std::any params) {
     uppexo::command::initializeRecorder(
@@ -95,7 +164,7 @@ void uppexo::ForwardRenderingEngine::prerecordCommandBuffer() {
     uppexo::command::bindVertexBuffer(
         commandBuffer.getBuffer(
             std::get<1>(std::any_cast<std::tuple<int, int>>(params))),
-        vertexBuffer.getBuffer());
+        buffer.getBuffer(0));
     uppexo::command::setViewport(
         commandBuffer.getBuffer(
             std::get<1>(std::any_cast<std::tuple<int, int>>(params))),
@@ -104,23 +173,50 @@ void uppexo::ForwardRenderingEngine::prerecordCommandBuffer() {
         commandBuffer.getBuffer(
             std::get<1>(std::any_cast<std::tuple<int, int>>(params))),
         device.getSwapChainExtend());
-    uppexo::command::normalDraw(
+    uppexo::command::bindDescriptorSet(
         commandBuffer.getBuffer(
             std::get<1>(std::any_cast<std::tuple<int, int>>(params))),
-        3, 1, 0, 0);
+        DescriptorSet
+            .getSet()[std::get<1>(std::any_cast<std::tuple<int, int>>(params))],
+        pipeline.getLayout());
+    /*uppexo::command::normalDraw(
+        commandBuffer.getBuffer(
+            std::get<1>(std::any_cast<std::tuple<int, int>>(params))),
+        vertexCount * 3, 1, 0, 0);*/
+    uppexo::command::indexedDraw(
+        commandBuffer.getBuffer(
+            std::get<1>(std::any_cast<std::tuple<int, int>>(params))),
+        vertexCount, buffer.getBuffer(1));
     uppexo::command::deinitializeRecorder(commandBuffer.getBuffer(
         std::get<1>(std::any_cast<std::tuple<int, int>>(params))));
   });
 }
 
+auto startTime = std::chrono::high_resolution_clock::now();
+auto endTime = std::chrono::high_resolution_clock::now();
+
 void uppexo::ForwardRenderingEngine::run() {
   uppexo::Log::GetInstance().logInfo("Run\n");
-  auto &instance = getComponent<uppexo::Instance>(0);
-  auto &synchronizer = getComponent<uppexo::Synchronizer>(6);
-  auto &device = getComponent<uppexo::Device>(1);
-  auto &commandbuffer = getComponent<uppexo::CommandBuffer>(5);
+  auto &instance = getComponent<uppexo::Instance>(instanceID);
+  auto &synchronizer = getComponent<uppexo::Synchronizer>(synchronizerID);
+  auto &device = getComponent<uppexo::Device>(deviceID);
+  auto &commandbuffer = getComponent<uppexo::CommandBuffer>(commandBufferID);
   while (!glfwWindowShouldClose(instance.getWindow())) {
     glfwPollEvents();
+    earlyLoopFunction(*this);
+    endTime = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                       endTime - startTime)
+                       .count();
+    startTime = endTime;
+
+    // limit the frame rate to 60 FPS
+    const int MAX_FRAME_RATE = 60;
+    const int MIN_FRAME_TIME = 1000 / MAX_FRAME_RATE;
+    if (elapsed < MIN_FRAME_TIME) {
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(MIN_FRAME_TIME - elapsed));
+    }
     synchronizer.waitForFence({current_frame}, true);
 
     uint32_t imageIndex;
@@ -149,6 +245,10 @@ void uppexo::ForwardRenderingEngine::run() {
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
+    getComponent<uppexo::Buffer>(bufferID).copyByMapping(
+        2 + current_frame, mesh.getMVPList(),
+        mesh.getMVPCount() * sizeof(uppexo::MVP));
+
     if (vkQueueSubmit(device.getQueue(uppexo::QueueType::graphic).queue[0], 1,
                       &submitInfo,
                       synchronizer.getFence(current_frame)) != VK_SUCCESS) {
@@ -158,28 +258,30 @@ void uppexo::ForwardRenderingEngine::run() {
 
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
-
     VkSwapchainKHR swapChains[] = {device.getSwapChain()};
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapChains;
-
     presentInfo.pImageIndices = &imageIndex;
 
     vkQueuePresentKHR(device.getQueue(uppexo::QueueType::present).queue[0],
                       &presentInfo);
 
     current_frame = (current_frame + 1) % FRAME_IN_FLIGHT;
+    // uppexo::Log::GetInstance().logError("END\n");
   }
   vkDeviceWaitIdle(device.getLogicalDevice());
 }
 
 uppexo::ForwardRenderingEngine::~ForwardRenderingEngine() {}
 
-void uppexo::ForwardRenderingEngine::pushVertexBuffer(
-    uppexo::FullVertex *vertex) {
-  uppexo::Buffer &vertexBuffer = getComponent<uppexo::Buffer>(7);
-  vertexBuffer.copyByMapping(vertex, 3 * sizeof(uppexo::FullVertex));
+void uppexo::ForwardRenderingEngine::update() {
+  uppexo::Buffer &buffer = getComponent<uppexo::Buffer>(bufferID);
+  buffer.copyByMapping(0, mesh.getVertexList(),
+                             mesh.getVertexCount() *
+                                 sizeof(uppexo::FullVertex));
+  buffer.copyByMapping(1, mesh.getIndexList(),
+                             mesh.getIndexCount() * sizeof(uint32_t));
+  vertexCount = mesh.getIndexCount();
 }
