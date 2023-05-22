@@ -17,8 +17,14 @@ struct GraphicPipelineBlueprint {
   std::vector<VkVertexInputBindingDescription> bindingDescription;
   std::vector<VkVertexInputAttributeDescription> attributeDescription;
   bool isDepthEnable = false;
+  bool directRead = false;
   VkDevice device;
   VkRenderPass renderpass;
+
+  char* VertexShaderCode;
+  char* FragmentShaderCode;
+  int VertexShaderLen;
+  int FragmentShaderLen;
 
   DescriptorSet *descriptorSet;
 

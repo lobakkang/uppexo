@@ -14,6 +14,8 @@
 #include <core/mesh.hpp>
 #include <cstdint>
 #include <engine/forward.hpp>
+#include <generated/forwardFragmentShader.h>
+#include <generated/forwardVertexShader.h>
 #include <memory>
 #include <thread>
 #include <utility>
@@ -122,8 +124,12 @@ void uppexo::ForwardRenderingEngine::buildComponent() {
       getComponent<uppexo::Renderpass>(renderPassID),
       getComponent<uppexo::DescriptorSet>(descriptorID));
   graphicPipelineBlueprint.isDepthEnable = true;
-  graphicPipelineBlueprint.VertexShader = "./shaders/forwardShader.vert.spv";
-  graphicPipelineBlueprint.FragmentShader = "./shaders/forwardShader.frag.spv";
+  graphicPipelineBlueprint.directRead = true;
+  graphicPipelineBlueprint.VertexShaderCode = (char*)forwardVertexShader;
+  graphicPipelineBlueprint.VertexShaderLen = forwardVertexShader_size;
+  graphicPipelineBlueprint.FragmentShaderCode = (char*)forwardFragmentShader;
+  graphicPipelineBlueprint.FragmentShaderLen = forwardFragmentShader_size;
+
   pipelineID = addComponent<uppexo::GraphicPipeline>(graphicPipelineBlueprint);
 
   uppexo::SynchronizerBlueprint synchronizerBlueprint(
@@ -279,9 +285,8 @@ uppexo::ForwardRenderingEngine::~ForwardRenderingEngine() {}
 void uppexo::ForwardRenderingEngine::update() {
   uppexo::Buffer &buffer = getComponent<uppexo::Buffer>(bufferID);
   buffer.copyByMapping(0, mesh.getVertexList(),
-                             mesh.getVertexCount() *
-                                 sizeof(uppexo::FullVertex));
+                       mesh.getVertexCount() * sizeof(uppexo::FullVertex));
   buffer.copyByMapping(1, mesh.getIndexList(),
-                             mesh.getIndexCount() * sizeof(uint32_t));
+                       mesh.getIndexCount() * sizeof(uint32_t));
   vertexCount = mesh.getIndexCount();
 }

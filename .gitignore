@@ -50,3 +50,4 @@ Testing
 .gdb_history
 
 CTestTestfile.cmake
+forward_rendering

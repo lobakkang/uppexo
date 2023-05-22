@@ -85,12 +85,11 @@ bool uppexo::checkDeviceExtensionSupport(VkPhysicalDevice device) {
   return requiredExtensions.empty();
 }
 
-VkShaderModule uppexo::createShaderModule(VkDevice device,
-                                          const std::vector<char> &code) {
+VkShaderModule uppexo::createShaderModule(VkDevice device, char *code, int len) {
   VkShaderModuleCreateInfo createInfo{};
   createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-  createInfo.codeSize = code.size();
-  createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
+  createInfo.codeSize = len;
+  createInfo.pCode = reinterpret_cast<const uint32_t *>(code);
 
   VkShaderModule shaderModule;
   if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) !=

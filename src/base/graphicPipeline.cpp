@@ -9,10 +9,23 @@ uppexo::GraphicPipeline::GraphicPipeline(
 
   // uppexo::Log::GetInstance().logVerbose("\n");
   uppexo::Log::GetInstance().logVerbose("Loading shader binaries\n");
-  VkShaderModule vertShaderModule = uppexo::createShaderModule(
-      deviceHandle, uppexo::readFile(pipelineBlueprint.VertexShader));
-  VkShaderModule fragShaderModule = uppexo::createShaderModule(
-      deviceHandle, uppexo::readFile(pipelineBlueprint.FragmentShader));
+  VkShaderModule vertShaderModule;
+  VkShaderModule fragShaderModule;
+  if (!pipelineBlueprint.directRead) {
+    std::vector<char> vertexShader =
+        uppexo::readFile(pipelineBlueprint.VertexShader);
+    std::vector<char> fragmentShader =
+        uppexo::readFile(pipelineBlueprint.FragmentShader);
+    vertShaderModule = uppexo::createShaderModule(
+        deviceHandle, vertexShader.data(), vertexShader.size());
+    fragShaderModule = uppexo::createShaderModule(
+        deviceHandle, fragmentShader.data(), fragmentShader.size());
+  } else {
+    vertShaderModule = uppexo::createShaderModule(
+        deviceHandle, pipelineBlueprint.VertexShaderCode, pipelineBlueprint.VertexShaderLen);
+    fragShaderModule = uppexo::createShaderModule(
+        deviceHandle, pipelineBlueprint.FragmentShaderCode, pipelineBlueprint.FragmentShaderLen);
+  }
   uppexo::Log::GetInstance().logVerbose("Creating shader modules\n");
   VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
   vertShaderStageInfo.sType =
