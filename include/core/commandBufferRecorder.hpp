@@ -43,6 +43,17 @@ inline void initializeRecorder(VkCommandBuffer commandbuffer,
                        VK_SUBPASS_CONTENTS_INLINE);
 };
 
+inline void initializeComputeRecorder(VkCommandBuffer commandbuffer) {
+  vkResetCommandBuffer(commandbuffer, 0);
+
+  VkCommandBufferBeginInfo beginInfo{};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  if (vkBeginCommandBuffer(commandbuffer, &beginInfo) != VK_SUCCESS) {
+    uppexo::Log::GetInstance().logError(
+        "Failed to begin recording command buffer!\n");
+  }
+};
+
 inline void transitionImageLayout(VkCommandBuffer commandBuffer, VkImage image,
                                   VkFormat format, VkImageLayout oldLayout,
                                   VkImageLayout newLayout) {
@@ -107,6 +118,12 @@ inline void bindGraphicPipeline(VkCommandBuffer commandbuffer,
                     graphicPipeline);
 }
 
+inline void bindComputePipeline(VkCommandBuffer commandbuffer,
+                                VkPipeline computePipeline) {
+  vkCmdBindPipeline(commandbuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+                    computePipeline);
+}
+
 inline void setScissor(VkCommandBuffer commandbuffer, VkExtent2D extend) {
   VkRect2D scissor{};
   scissor.offset = {0, 0};
@@ -132,7 +149,8 @@ inline void normalDraw(VkCommandBuffer commandbuffer, int vertexCount,
             firstInstance);
 }
 
-inline void indexedDraw(VkCommandBuffer commandbuffer, int vertexCount, VkBuffer indexBuffer) {
+inline void indexedDraw(VkCommandBuffer commandbuffer, int vertexCount,
+                        VkBuffer indexBuffer) {
   vkCmdBindIndexBuffer(commandbuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
   vkCmdDrawIndexed(commandbuffer, vertexCount, 1, 0, 0, 0);
 }
@@ -151,8 +169,26 @@ inline void bindDescriptorSet(VkCommandBuffer commandbuffer,
                           pipelineLayout, 0, 1, &set, 0, nullptr);
 }
 
+inline void bindComputeDescriptorSet(VkCommandBuffer commandbuffer,
+                                     VkDescriptorSet set,
+                                     VkPipelineLayout pipelineLayout) {
+  vkCmdBindDescriptorSets(commandbuffer, VK_PIPELINE_BIND_POINT_COMPUTE,
+                          pipelineLayout, 0, 1, &set, 0, nullptr);
+}
+
+inline void dispatchCompute(VkCommandBuffer commandbuffer, int x, int y,
+                            int z) {
+  vkCmdDispatch(commandbuffer, x, y, z);
+}
+
 inline void deinitializeRecorder(VkCommandBuffer commandbuffer) {
   vkCmdEndRenderPass(commandbuffer);
+  if (vkEndCommandBuffer(commandbuffer) != VK_SUCCESS) {
+    uppexo::Log::GetInstance().logError("Failed to record command buffer!\n");
+  }
+}
+
+inline void deinitializeComputeRecorder(VkCommandBuffer commandbuffer) {
   if (vkEndCommandBuffer(commandbuffer) != VK_SUCCESS) {
     uppexo::Log::GetInstance().logError("Failed to record command buffer!\n");
   }

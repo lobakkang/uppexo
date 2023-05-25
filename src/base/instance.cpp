@@ -11,11 +11,13 @@ uppexo::Instance::Instance(uppexo::InstanceBlueprint instanceBlueprint) {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    window = glfwCreateWindow(instanceBlueprint.windowWidth, instanceBlueprint.windowHeight,
-                              instanceBlueprint.appName.c_str(), nullptr, nullptr);
+    window = glfwCreateWindow(
+        instanceBlueprint.windowWidth, instanceBlueprint.windowHeight,
+        instanceBlueprint.appName.c_str(), nullptr, nullptr);
   }
 
-  if (instanceBlueprint.isValidationLayerEnable && !checkValidationLayerSupport()) {
+  if (instanceBlueprint.isValidationLayerEnable &&
+      !checkValidationLayerSupport()) {
     uppexo::Log::GetInstance().logError(
         "Validation layer requested but not available\n");
   }
@@ -33,7 +35,8 @@ uppexo::Instance::Instance(uppexo::InstanceBlueprint instanceBlueprint) {
   createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
   createInfo.pApplicationInfo = &appInfo;
 
-  auto extensions = getRequiredExtensions(instanceBlueprint.isValidationLayerEnable);
+  auto extensions =
+      getRequiredExtensions(instanceBlueprint.isValidationLayerEnable);
   createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
   createInfo.ppEnabledExtensionNames = extensions.data();
 
@@ -69,17 +72,22 @@ uppexo::Instance::Instance(uppexo::InstanceBlueprint instanceBlueprint) {
     uppexo::Log::GetInstance().logError("Failed to setup debug messenger\n");
   }
 
-  uppexo::Log::GetInstance().logVerbose("Creating Vulkan surface\n");
-  if (glfwCreateWindowSurface(instance, window, nullptr, &surface) !=
-      VK_SUCCESS) {
-    uppexo::Log::GetInstance().logError("failed to create window surface!\n");
+  if (instanceBlueprint.isGraphicEnable) {
+    uppexo::Log::GetInstance().logVerbose("Creating Vulkan surface\n");
+    if (glfwCreateWindowSurface(instance, window, nullptr, &surface) !=
+        VK_SUCCESS) {
+      uppexo::Log::GetInstance().logError("failed to create window surface!\n");
+    }
   }
 }
 
 uppexo::Instance::~Instance() {
   uppexo::Log::GetInstance().logInfo("Deallocating Instance\n");
-  uppexo::Log::GetInstance().logVerbose("Destroying Vulkan surface\n");
-  vkDestroySurfaceKHR(instance, surface, nullptr);
+  if (isGraphicEnable) {
+    uppexo::Log::GetInstance().logVerbose("Destroying Vulkan surface\n");
+    vkDestroySurfaceKHR(instance, surface, nullptr);
+  }
+
   uppexo::Log::GetInstance().logVerbose("Destroying debug messenger\n");
   if (isValidationLayerEnable) {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
@@ -101,6 +109,10 @@ VkInstance &uppexo::Instance::getInstance() { return instance; }
 
 VkSurfaceKHR &uppexo::Instance::getSurface() { return surface; }
 
-bool uppexo::Instance::IsValidationLayerEnable() { return isValidationLayerEnable; }
+bool uppexo::Instance::IsValidationLayerEnable() {
+  return isValidationLayerEnable;
+}
 
-GLFWwindow* uppexo::Instance::getWindow() { return window; }
+bool uppexo::Instance::IsGraphicEnable() { return isGraphicEnable; }
+
+GLFWwindow *uppexo::Instance::getWindow() { return window; }

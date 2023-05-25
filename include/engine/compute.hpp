@@ -10,6 +10,7 @@
 namespace uppexo {
 struct ComputeEngineBlueprint {
   std::string title;
+  int memorySize;
 };
 
 class ComputeEngine : public Engine<ComputeEngine, ComputeEngineBlueprint> {
@@ -17,9 +18,12 @@ public:
   ComputeEngine(ComputeEngineBlueprint computeEngineBlueprint);
   ~ComputeEngine();
   void run() override;
+  void pushMemory(void* addr, size_t len);
+  void pullMemory(void *addr, size_t len);
 
 protected:
   std::string title;
+  int memorySize;
 
   friend class Engine<ComputeEngine, ComputeEngineBlueprint>;
   virtual void buildComponent() override;

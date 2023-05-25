@@ -62,6 +62,23 @@ struct Sampler_at_fragment_shader : DescriptorSetBindingBlueprint {
     this->buffer = VK_NULL_HANDLE;
   }
 };
+
+struct SSBO_at_compute_shader : DescriptorSetBindingBlueprint {
+  SSBO_at_compute_shader(VkBuffer buffer, int size) {
+    this->buffer = buffer;
+    this->size = size;
+    this->type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    this->stage = VK_SHADER_STAGE_COMPUTE_BIT;
+    this->sampler = VK_NULL_HANDLE;
+  }
+  SSBO_at_compute_shader(Buffer &buffer, int id, int size) {
+    this->buffer = buffer.getBuffer(id);
+    this->size = size;
+    this->type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    this->stage = VK_SHADER_STAGE_COMPUTE_BIT;
+    this->sampler = VK_NULL_HANDLE;
+  }
+};
 }; // namespace presetDescriptorSetBindingBlueprint
 
 struct DescriptorSetBlueprint {

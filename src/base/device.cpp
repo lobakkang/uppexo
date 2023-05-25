@@ -117,13 +117,15 @@ uppexo::Device::Device(uppexo::DeviceBlueprint deviceBlueprint) {
         }
       }
 
-      VkBool32 presentSupport = false;
-      vkGetPhysicalDeviceSurfaceSupportKHR(device, i, deviceBlueprint.surface,
-                                           &presentSupport);
-      if (presentSupport) {
-        if (queueFamily.queueCount >= queueData[present].queueCount) {
-          queueData[present].queueFamilyID = i;
-          queueFamily.queueCount -= queueData[present].queueCount;
+      if (deviceBlueprint.IsGraphicEnable) {
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, i, deviceBlueprint.surface,
+                                             &presentSupport);
+        if (presentSupport) {
+          if (queueFamily.queueCount >= queueData[present].queueCount) {
+            queueData[present].queueFamilyID = i;
+            queueFamily.queueCount -= queueData[present].queueCount;
+          }
         }
       }
 
@@ -186,9 +188,13 @@ uppexo::Device::Device(uppexo::DeviceBlueprint deviceBlueprint) {
       static_cast<uint32_t>(queueCreateInfos.size());
   deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
   deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
-  deviceCreateInfo.enabledExtensionCount =
-      static_cast<uint32_t>(deviceExtensions.size());
-  deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
+  if (deviceBlueprint.isSwapchainRequire) {
+    deviceCreateInfo.enabledExtensionCount =
+        static_cast<uint32_t>(deviceExtensions.size());
+    deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
+  } else {
+    deviceCreateInfo.enabledExtensionCount = 0;
+  }
   if (deviceBlueprint.IsValidationLayerEnable) {
     deviceCreateInfo.enabledLayerCount =
         static_cast<uint32_t>(validationLayers.size());

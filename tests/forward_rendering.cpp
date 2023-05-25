@@ -47,7 +47,7 @@ void loopFunc(uppexo::ForwardRenderingEngine &context) {
 
 int main(int argc, char *argv[]) {
   try {
-    std::cout << "Uppexo Demo Test" << std::endl;
+    uppexo::Log::GetInstance().logInfo("Uppexo forward rendering test\n");
 
     uppexo::ForwardRenderingEngineBlueprint engineBlueprint;
     engineBlueprint.width = 800;

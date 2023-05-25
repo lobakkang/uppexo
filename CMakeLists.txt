@@ -25,22 +25,23 @@ include_directories(${library_INCLUDE_DIRS} include/ third_party/)
 file(GLOB_RECURSE srcs src/*.cpp)
 file(GLOB demo demo/*.cpp)
 file(GLOB tests tests/*.cpp)
-file(GLOB_RECURSE GLSL_SOURCE_FILES demo/shader/*.frag demo/shader/*.vert)
+file(GLOB_RECURSE GLSL_SOURCE_FILES demo/shader/*.frag demo/shader/*.vert demo/shader/*.comp)
 
 foreach(GLSL ${GLSL_SOURCE_FILES})
   get_filename_component(FILE_NAME ${GLSL} NAME_WE)
   set(SPIRV "${PROJECT_BINARY_DIR}/shaders/${FILE_NAME}.spv")
   set(INCLUDE_HEAD "${PROJECT_BINARY_DIR}/include/generated/${FILE_NAME}.h")
   add_custom_command(
-    OUTPUT ${SPIRV} 
+    OUTPUT ${SPIRV} ${INCLUDE_HEAD}
     COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/shaders/"
     COMMAND ${GLSLC_EXECUTABLE} ${GLSL} -o ${SPIRV}
     COMMAND ${BIN2C_EXECUTABLE} -n ${FILE_NAME} -o ${INCLUDE_HEAD} ${SPIRV} 
     DEPENDS ${GLSL})
   list(APPEND SPIRV_BINARY_FILES ${SPIRV})
+  list(APPEND SPIRV_HEADER_FILES ${INCLUDE_HEAD})
 endforeach(GLSL)
 
-add_custom_target(Shaders DEPENDS ${SPIRV_BINARY_FILES})
+add_custom_target(Shaders DEPENDS ${SPIRV_BINARY_FILES} ${SPIRV_HEADER_FILES})
 
 add_subdirectory(third_party/obj)
 add_library(uppexo SHARED ${srcs})

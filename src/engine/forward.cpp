@@ -51,6 +51,7 @@ void uppexo::ForwardRenderingEngine::buildComponent() {
 
   uppexo::DeviceBlueprint deviceBlueprint(
       getComponent<uppexo::Instance>(instanceID));
+  deviceBlueprint.isSwapchainRequire = true;
   deviceID = addComponent<uppexo::Device>(deviceBlueprint);
 
   uppexo::RenderpassBlueprint renderpassBlueprint(
@@ -125,9 +126,10 @@ void uppexo::ForwardRenderingEngine::buildComponent() {
       getComponent<uppexo::DescriptorSet>(descriptorID));
   graphicPipelineBlueprint.isDepthEnable = true;
   graphicPipelineBlueprint.directRead = true;
-  graphicPipelineBlueprint.VertexShaderCode = (char*)forwardVertexShader;
+
+  graphicPipelineBlueprint.VertexShaderCode = (char *)forwardVertexShader;
   graphicPipelineBlueprint.VertexShaderLen = forwardVertexShader_size;
-  graphicPipelineBlueprint.FragmentShaderCode = (char*)forwardFragmentShader;
+  graphicPipelineBlueprint.FragmentShaderCode = (char *)forwardFragmentShader;
   graphicPipelineBlueprint.FragmentShaderLen = forwardFragmentShader_size;
 
   pipelineID = addComponent<uppexo::GraphicPipeline>(graphicPipelineBlueprint);

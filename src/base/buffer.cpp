@@ -144,8 +144,16 @@ void uppexo::Buffer::copyByMapping(int id, void *data, unsigned int size) {
   vkUnmapMemory(deviceHandle, memoryList[cellList[id].location]);
 }
 
+void uppexo::Buffer::copyOutByMapping(int id, void *data, unsigned int size) {
+  // uppexo::Log::GetInstance().logVerbose(
+  //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);
+  void *mappedMemory;
+  vkMapMemory(deviceHandle, memoryList[cellList[id].location],
+              bufferOffsetList[id], size, 0, &mappedMemory);
+  memcpy(data, mappedMemory, size);
+  vkUnmapMemory(deviceHandle, memoryList[cellList[id].location]);
+}
+
 VkBuffer &uppexo::Buffer::getBuffer(int id) { return bufferList[id]; }
 
-int uppexo::Buffer::getStagingBufferID() {
-  return bufferList.size() - 1;
-}
+int uppexo::Buffer::getStagingBufferID() { return bufferList.size() - 1; }

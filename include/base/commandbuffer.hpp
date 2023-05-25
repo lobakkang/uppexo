@@ -22,6 +22,13 @@ struct CommandBufferBlueprint {
     this->queueID = device.getQueue(QueueType::graphic).queueFamilyID.value();
     this->commandQueue = device.getQueue(QueueType::graphic).queue[0];
   }
+
+  CommandBufferBlueprint(Device &device, QueueType type) {
+    bufferNum = 1;
+    this->device = device.getLogicalDevice();
+    this->queueID = device.getQueue(type).queueFamilyID.value();
+    this->commandQueue = device.getQueue(type).queue[0];
+  }
 };
 
 class CommandBuffer {

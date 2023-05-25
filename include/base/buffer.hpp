@@ -65,6 +65,15 @@ struct IBO_at_device : BufferCellBlueprint {
     this->usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
   }
 };
+
+struct SSBO_at_device : BufferCellBlueprint {
+  SSBO_at_device(int size) {
+    this->size = size;
+    this->location = ON_DEVICE_INVISIBLE_TO_HOST;
+    this->usage = (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+                                          VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+  }
+};
 }; // namespace presetBufferCellBlueprint
 
 struct BufferBlueprint {
@@ -86,6 +95,7 @@ public:
   ~Buffer();
 
   void copyByMapping(int id, void *data, unsigned int size);
+  void copyOutByMapping(int id, void *data, unsigned int size);
   // void* mapBuffer(int id);
   // void demapBuffer(int id);
   VkBuffer &getBuffer(int id);

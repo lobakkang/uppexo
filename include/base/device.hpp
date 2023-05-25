@@ -24,6 +24,7 @@ struct DeviceBlueprint {
 
   VkInstance instance;
   bool IsValidationLayerEnable;
+  bool IsGraphicEnable;
   VkSurfaceKHR surface;
   GLFWwindow *window;
 
@@ -33,6 +34,7 @@ struct DeviceBlueprint {
     this->window = instance.getWindow();
     this->IsValidationLayerEnable = instance.IsValidationLayerEnable();
     this->surface = instance.getSurface();
+    this->IsGraphicEnable = instance.IsGraphicEnable();
   }
 };
 

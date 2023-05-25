@@ -26,6 +26,7 @@ public:
   VkSurfaceKHR &getSurface();
   GLFWwindow* getWindow();
   bool IsValidationLayerEnable();
+  bool IsGraphicEnable();
 
 private:
   VkInstance instance;
