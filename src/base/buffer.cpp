@@ -134,23 +134,23 @@ uppexo::Buffer::~Buffer() {
   }
 }
 
-void uppexo::Buffer::copyByMapping(int id, void *data, unsigned int size) {
+void uppexo::Buffer::copyByMapping(int id, void *data, unsigned int size, unsigned int offset) {
   // uppexo::Log::GetInstance().logVerbose(
   //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);
   void *mappedMemory;
   vkMapMemory(deviceHandle, memoryList[cellList[id].location],
               bufferOffsetList[id], size, 0, &mappedMemory);
-  memcpy(mappedMemory, data, size);
+  memcpy(static_cast<char*>(mappedMemory) + offset, data, size);
   vkUnmapMemory(deviceHandle, memoryList[cellList[id].location]);
 }
 
-void uppexo::Buffer::copyOutByMapping(int id, void *data, unsigned int size) {
+void uppexo::Buffer::copyOutByMapping(int id, void *data, unsigned int size, unsigned int offset) {
   // uppexo::Log::GetInstance().logVerbose(
   //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);
   void *mappedMemory;
   vkMapMemory(deviceHandle, memoryList[cellList[id].location],
               bufferOffsetList[id], size, 0, &mappedMemory);
-  memcpy(data, mappedMemory, size);
+  memcpy(data, static_cast<char*>(mappedMemory) + offset, size);
   vkUnmapMemory(deviceHandle, memoryList[cellList[id].location]);
 }
 

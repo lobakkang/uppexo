@@ -94,8 +94,8 @@ public:
   Buffer(BufferBlueprint bufferBlueprint);
   ~Buffer();
 
-  void copyByMapping(int id, void *data, unsigned int size);
-  void copyOutByMapping(int id, void *data, unsigned int size);
+  void copyByMapping(int id, void *data, unsigned int size, unsigned int offset = 0);
+  void copyOutByMapping(int id, void *data, unsigned int size, unsigned int offset = 0);
   // void* mapBuffer(int id);
   // void demapBuffer(int id);
   VkBuffer &getBuffer(int id);
