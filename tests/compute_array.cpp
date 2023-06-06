@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
     uppexo::ComputeEngineBlueprint engineBlueprint;
 
     std::vector<float> data;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
       data.push_back(i);
     }
     std::cout << std::endl;
@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
         uppexo::ComputeEngine::create(engineBlueprint);
     engine->pushMemory(data.data(), data.size() * sizeof(float));
     uppexo::Log::GetInstance().logInfo("Before:\n");
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
       std::cout << data[i] << " ";
     }
     std::cout << std::endl;
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 
     engine->pullMemory(data.data(), data.size() * sizeof(float));
     uppexo::Log::GetInstance().logInfo("After:\n");
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
       std::cout << data[i] << " ";
     }
     std::cout << std::endl;
