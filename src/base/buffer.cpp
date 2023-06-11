@@ -5,11 +5,6 @@
 #include <utils/vulkan_util.hpp>
 #include <vulkan/vulkan_core.h>
 
-struct memoryInfo {
-  int size;
-  uppexo::BufferLocation location;
-};
-
 uppexo::Buffer::Buffer(uppexo::BufferBlueprint bufferBlueprint) {
   uppexo::Log::GetInstance().logInfo("Allocating buffer\n");
   deviceHandle = bufferBlueprint.device;
@@ -38,8 +33,9 @@ uppexo::Buffer::Buffer(uppexo::BufferBlueprint bufferBlueprint) {
   }
 
   // uppexo::Log::GetInstance().logVerbose("\n");
+  bufferMemoryPairList.clear();
   uppexo::Log::GetInstance().logVerbose("Optimizing memory allocation\n");
-  std::map<int, memoryInfo> memoryMap;
+  std::map<int, int> memoryMap;
   i = 0;
   for (VkBuffer buffer : bufferList) {
     VkMemoryRequirements memRequirements;
@@ -80,24 +76,23 @@ uppexo::Buffer::Buffer(uppexo::BufferBlueprint bufferBlueprint) {
       uppexo::Log::GetInstance().logError(
           "No suitable memory is available for buffer!\n");
     }
-    memoryMap[selectedIndex].size += memRequirements.size;
-    memoryMap[selectedIndex].location = bufferBlueprint.cellList[i].location;
+    memoryMap[selectedIndex] += memRequirements.size;
+    bufferMemoryPairList.push_back(selectedIndex);
     i++;
   }
 
   uppexo::Log::GetInstance().logVerbose("Memory allocation map:\n");
-  uppexo::Log::GetInstance().logVerbose("ID - size(byte) - location\n");
+  uppexo::Log::GetInstance().logVerbose("ID - size(byte) - paired buffer\n");
   for (auto &pair : memoryMap) {
     uppexo::Log::GetInstance().logVerbose(
-        "%i - %i - %s\n", pair.first, pair.second.size,
-        uppexo::BufferLocationToString(pair.second.location).c_str());
+        "%i - %i -\n", pair.first, pair.second);
   }
 
   uppexo::Log::GetInstance().logVerbose("Allocating device memory\n");
   for (auto &pair : memoryMap) {
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = pair.second.size;
+    allocInfo.allocationSize = pair.second;
     allocInfo.memoryTypeIndex = pair.first;
     VkDeviceMemory memory;
     if (vkAllocateMemory(deviceHandle, &allocInfo, nullptr, &memory) !=
@@ -105,19 +100,19 @@ uppexo::Buffer::Buffer(uppexo::BufferBlueprint bufferBlueprint) {
       uppexo::Log::GetInstance().logError(
           "Failed to allocate buffer memory!\n");
     }
-    memoryList[pair.second.location] = memory;
+    memoryList[pair.first] = memory;
   }
 
   uppexo::Log::GetInstance().logVerbose("Binding buffer to memory\n");
   i = 0;
-  std::map<uppexo::BufferLocation, int> offsetList;
+  std::map<int, int> offsetList;
   for (VkBuffer buffer : bufferList) {
     vkBindBufferMemory(deviceHandle, buffer,
-                       memoryList[bufferBlueprint.cellList[i].location],
-                       offsetList[bufferBlueprint.cellList[i].location]);
+                       memoryList[bufferMemoryPairList[i]],
+                       offsetList[bufferMemoryPairList[i]]);
     bufferOffsetList.push_back(
-        offsetList[bufferBlueprint.cellList[i].location]);
-    offsetList[bufferBlueprint.cellList[i].location] +=
+        offsetList[bufferMemoryPairList[i]]);
+    offsetList[bufferMemoryPairList[i]] +=
         bufferBlueprint.cellList[i].size;
     i++;
   }
@@ -138,13 +133,37 @@ void uppexo::Buffer::copyByMapping(int id, void *data, unsigned int size, unsign
   // uppexo::Log::GetInstance().logVerbose(
   //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);
   void *mappedMemory;
+  vkMapMemory(deviceHandle, memoryList[bufferMemoryPairList[id]],
+              bufferOffsetList[id], size, 0, &mappedMemory);
+  memcpy(static_cast<char*>(mappedMemory) + offset, data, size);
+  vkUnmapMemory(deviceHandle, memoryList[bufferMemoryPairList[id]]);
+}
+
+void uppexo::Buffer::copyOutByMapping(int id, void *data, unsigned int size, unsigned int offset) {
+  // uppexo::Log::GetInstance().logVerbose(
+  //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);
+  void *mappedMemory;
+  vkMapMemory(deviceHandle, memoryList[bufferMemoryPairList[id]],
+              bufferOffsetList[id], size, 0, &mappedMemory);
+  memcpy(data, static_cast<char*>(mappedMemory) + offset, size);
+  vkUnmapMemory(deviceHandle, memoryList[bufferMemoryPairList[id]]);
+}
+
+VkBuffer &uppexo::Buffer::getBuffer(int id) { return bufferList[id]; }
+
+int uppexo::Buffer::getStagingBufferID() { return bufferList.size() - 1; }
+
+void uppexo::Buffer::copyByStaging(int id, void *data, unsigned int size, unsigned int offset) {
+  // uppexo::Log::GetInstance().logVerbose(
+  //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);
+  void *mappedMemory;
   vkMapMemory(deviceHandle, memoryList[cellList[id].location],
               bufferOffsetList[id], size, 0, &mappedMemory);
   memcpy(static_cast<char*>(mappedMemory) + offset, data, size);
   vkUnmapMemory(deviceHandle, memoryList[cellList[id].location]);
 }
 
-void uppexo::Buffer::copyOutByMapping(int id, void *data, unsigned int size, unsigned int offset) {
+void uppexo::Buffer::copyOutByStaging(int id, void *data, unsigned int size, unsigned int offset) {
   // uppexo::Log::GetInstance().logVerbose(
   //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);
   void *mappedMemory;
@@ -154,6 +173,3 @@ void uppexo::Buffer::copyOutByMapping(int id, void *data, unsigned int size, uns
   vkUnmapMemory(deviceHandle, memoryList[cellList[id].location]);
 }
 
-VkBuffer &uppexo::Buffer::getBuffer(int id) { return bufferList[id]; }
-
-int uppexo::Buffer::getStagingBufferID() { return bufferList.size() - 1; }

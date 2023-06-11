@@ -96,6 +96,8 @@ public:
 
   void copyByMapping(int id, void *data, unsigned int size, unsigned int offset = 0);
   void copyOutByMapping(int id, void *data, unsigned int size, unsigned int offset = 0);
+  void copyByStaging(int id, void *data, unsigned int size, unsigned int offset = 0);
+  void copyOutByStaging(int id, void *data, unsigned int size, unsigned int offset = 0);
   // void* mapBuffer(int id);
   // void demapBuffer(int id);
   VkBuffer &getBuffer(int id);
@@ -104,8 +106,9 @@ public:
 private:
   std::vector<BufferCellBlueprint> cellList;
   std::vector<int> bufferOffsetList;
+  std::vector<int> bufferMemoryPairList;
   std::vector<VkBuffer> bufferList;
-  std::map<BufferLocation, VkDeviceMemory> memoryList;
+  std::map<int, VkDeviceMemory> memoryList;
   VkDevice deviceHandle;
 };
 } // namespace uppexo

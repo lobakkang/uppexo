@@ -70,7 +70,7 @@ void uppexo::ForwardRenderingEngine::buildComponent() {
   uppexo::BufferBlueprint bufferBlueprint(
       getComponent<uppexo::Device>(deviceID));
   bufferBlueprint.cellList = {
-      uppexo::presetBufferCellBlueprint::VBO_at_host(
+      uppexo::presetBufferCellBlueprint::VBO_at_device(
           1024 * 1024 * sizeof(uppexo::FullVertex)),
       uppexo::presetBufferCellBlueprint::IBO_at_device(1024 * 1024),
       uppexo::presetBufferCellBlueprint::UBO_at_device(sizeof(uppexo::MVP)),
