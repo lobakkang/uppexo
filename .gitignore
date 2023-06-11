@@ -43,7 +43,6 @@ shaders/*
 
 install_manifest.txt
 *.vim
-include/generated/*
 Testing
 
 .cache
