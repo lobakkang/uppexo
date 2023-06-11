@@ -95,7 +95,7 @@ void uppexo::ForwardRenderingEngine::buildComponent() {
       uppexo::presetImageCellBlueprint::DepthImageCellBlueprint(
           getComponent<uppexo::Device>(deviceID).getPhysicalDevice()),
       uppexo::presetImageCellBlueprint::TextureImageCellBlueprint(
-          "viking_room.png")};
+          "demo/viking_room.png")};
   imageID = addComponent<uppexo::Image>(imageBlueprint);
 
   uppexo::FramebufferBlueprint framebufferBlueprint(

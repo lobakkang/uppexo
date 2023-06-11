@@ -198,19 +198,6 @@ uppexo/fast:
 .PHONY : uppexo/fast
 
 #=============================================================================
-# Target rules for targets named uppexo_demo
-
-# Build rule for target.
-uppexo_demo: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 uppexo_demo
-.PHONY : uppexo_demo
-
-# fast build rule for target.
-uppexo_demo/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo_demo.dir/build.make CMakeFiles/uppexo_demo.dir/build
-.PHONY : uppexo_demo/fast
-
-#=============================================================================
 # Target rules for targets named compute_array
 
 # Build rule for target.
@@ -261,30 +248,6 @@ uninstall: cmake_check_build_system
 uninstall/fast:
 	$(MAKE) $(MAKESILENT) -f third_party/obj/CMakeFiles/uninstall.dir/build.make third_party/obj/CMakeFiles/uninstall.dir/build
 .PHONY : uninstall/fast
-
-demo/main.o: demo/main.cpp.o
-.PHONY : demo/main.o
-
-# target to build an object file
-demo/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo_demo.dir/build.make CMakeFiles/uppexo_demo.dir/demo/main.cpp.o
-.PHONY : demo/main.cpp.o
-
-demo/main.i: demo/main.cpp.i
-.PHONY : demo/main.i
-
-# target to preprocess a source file
-demo/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo_demo.dir/build.make CMakeFiles/uppexo_demo.dir/demo/main.cpp.i
-.PHONY : demo/main.cpp.i
-
-demo/main.s: demo/main.cpp.s
-.PHONY : demo/main.s
-
-# target to generate assembly for a file
-demo/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo_demo.dir/build.make CMakeFiles/uppexo_demo.dir/demo/main.cpp.s
-.PHONY : demo/main.cpp.s
 
 src/base/buffer.o: src/base/buffer.cpp.o
 .PHONY : src/base/buffer.o
@@ -929,10 +892,6 @@ help:
 	@echo "... forward_rendering"
 	@echo "... tinyobjloader"
 	@echo "... uppexo"
-	@echo "... uppexo_demo"
-	@echo "... demo/main.o"
-	@echo "... demo/main.i"
-	@echo "... demo/main.s"
 	@echo "... src/base/buffer.o"
 	@echo "... src/base/buffer.i"
 	@echo "... src/base/buffer.s"

@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     engineBlueprint.title = "Uppexo Demo";
 
     uppexo::MeshInfo room;
-    room.path = "./viking_room.obj";
+    room.path = "./demo/viking_room.obj";
 
     std::unique_ptr<uppexo::ForwardRenderingEngine> engine =
         uppexo::ForwardRenderingEngine::create(engineBlueprint);

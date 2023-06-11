@@ -23,7 +23,6 @@ find_package(Boost REQUIRED)
 include_directories(${library_INCLUDE_DIRS} include/ third_party/)
 
 file(GLOB_RECURSE srcs src/*.cpp)
-file(GLOB demo demo/*.cpp)
 file(GLOB tests tests/*.cpp)
 file(GLOB_RECURSE GLSL_SOURCE_FILES demo/shader/*.frag demo/shader/*.vert demo/shader/*.comp)
 
@@ -46,11 +45,6 @@ add_custom_target(Shaders DEPENDS ${SPIRV_BINARY_FILES} ${SPIRV_HEADER_FILES})
 add_subdirectory(third_party/obj)
 add_library(uppexo SHARED ${srcs})
 set_property(TARGET uppexo PROPERTY CXX_STANDARD 17)
-
-add_executable(uppexo_demo ${demo})
-target_link_libraries(uppexo_demo ${Boost_LIBRARY} ${Vulkan_LIBRARY} glfw uppexo tinyobjloader glm)
-set_property(TARGET uppexo_demo PROPERTY CXX_STANDARD 17)
-add_dependencies(uppexo_demo Shaders)
 
 enable_testing()
 
