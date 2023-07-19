@@ -15,7 +15,17 @@ uppexo::Renderpass::Renderpass(RenderpassBlueprint renderpassBlueprint) {
     if (renderpassBlueprint.attachment[i].imageFormat != VK_FORMAT_UNDEFINED) {
       attachment.format = renderpassBlueprint.attachment[i].imageFormat;
     } else {
-      attachment.format = renderpassBlueprint.swapChainImageViewFormat;
+      switch (renderpassBlueprint.attachment[i].purpose) {
+      case AttachmentPurpose::SWAPCHAIN_COLOUR:
+        attachment.format = renderpassBlueprint.swapChainImageViewFormat;
+        break;
+      case AttachmentPurpose::DEPTH:
+        attachment.format = renderpassBlueprint.depthImageViewFormat;
+        break;
+      default:
+        attachment.format = renderpassBlueprint.swapChainImageViewFormat;
+        break;
+      }
     }
     attachment.samples = VK_SAMPLE_COUNT_1_BIT;
     attachment.loadOp = renderpassBlueprint.attachment[i].imageLoad;

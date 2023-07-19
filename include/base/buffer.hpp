@@ -76,7 +76,11 @@ struct SSBO_at_device : BufferCellBlueprint {
 };
 }; // namespace presetBufferCellBlueprint
 
+class Buffer;
+
 struct BufferBlueprint {
+  using Component = Buffer;
+
   std::vector<BufferCellBlueprint> cellList;
 
   VkDevice device;
@@ -86,6 +90,11 @@ struct BufferBlueprint {
   BufferBlueprint(Device &device) {
     this->device = device.getLogicalDevice();
     this->physicalDevice = device.getPhysicalDevice();
+  }
+
+  int addCell(BufferCellBlueprint bufferCell) {
+    cellList.push_back(bufferCell);
+    return cellList.size() - 1;
   }
 };
 
@@ -101,6 +110,9 @@ public:
   // void* mapBuffer(int id);
   // void demapBuffer(int id);
   VkBuffer &getBuffer(int id);
+  int getBufferSize(int id) {
+    return bufferSizeList[id];
+  };
   int getStagingBufferID();
 
 private:
@@ -108,6 +120,7 @@ private:
   std::vector<int> bufferOffsetList;
   std::vector<int> bufferMemoryPairList;
   std::vector<VkBuffer> bufferList;
+  std::vector<int> bufferSizeList;
   std::map<int, VkDeviceMemory> memoryList;
   VkDevice deviceHandle;
 };

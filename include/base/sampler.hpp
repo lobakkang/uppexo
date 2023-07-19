@@ -13,7 +13,11 @@ struct SamplerCellBlueprint {
   VkBool32 anisotropyEnable = false;
 };
 
+class Sampler;
+
 struct SamplerBlueprint {
+  using Component = Sampler;
+
   VkDevice device;
   VkPhysicalDevice physicalDevice;
   std::vector<SamplerCellBlueprint> cellList;
@@ -22,6 +26,10 @@ struct SamplerBlueprint {
   SamplerBlueprint(Device &device) {
     this->device = device.getLogicalDevice();
     this->physicalDevice = device.getPhysicalDevice();
+  }
+
+  void addSampler(SamplerCellBlueprint sampler = SamplerCellBlueprint()) {
+    cellList.push_back(sampler);
   }
 };
 

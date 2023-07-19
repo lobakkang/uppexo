@@ -1,14 +1,16 @@
 #ifndef RENDERPASS_H
 #define RENDERPASS_H
 
-#include <utils/vulkan_util.hpp>
 #include <base/device.hpp>
+#include <utils/vulkan_util.hpp>
 #include <vulkan/vulkan_core.h>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 namespace uppexo {
+enum AttachmentPurpose { SWAPCHAIN_COLOUR, DEPTH, UNKNOWN };
+
 struct AttachmentBlueprint {
   VkFormat imageFormat;
   VkAttachmentLoadOp imageLoad = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -18,6 +20,7 @@ struct AttachmentBlueprint {
   VkImageLayout initial;
   VkImageLayout final;
   VkImageLayout optimize;
+  AttachmentPurpose purpose;
 
   AttachmentBlueprint() = default;
 };
@@ -33,12 +36,13 @@ struct SwapchainAttachment : AttachmentBlueprint {
     initial = VK_IMAGE_LAYOUT_UNDEFINED;
     final = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
     optimize = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    purpose = AttachmentPurpose::SWAPCHAIN_COLOUR;
   };
 };
 
 struct DepthAttachment : AttachmentBlueprint {
-  DepthAttachment(VkPhysicalDevice physicalDevice) {
-    imageFormat = uppexo::findDepthFormat(physicalDevice);
+  DepthAttachment(VkFormat format = VK_FORMAT_UNDEFINED) {
+    imageFormat = format;
     imageLoad = VK_ATTACHMENT_LOAD_OP_CLEAR;
     imageStore = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     stencilLoad = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -46,6 +50,7 @@ struct DepthAttachment : AttachmentBlueprint {
     initial = VK_IMAGE_LAYOUT_UNDEFINED;
     final = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
     optimize = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    purpose = AttachmentPurpose::DEPTH;
   };
 };
 }; // namespace presetAttachmentBlueprint
@@ -58,9 +63,14 @@ struct SubpassBlueprint {
   SubpassBlueprint() = default;
 };
 
+class Renderpass;
+
 struct RenderpassBlueprint {
+  using Component = Renderpass;
+
   VkDevice device;
   VkFormat swapChainImageViewFormat;
+  VkFormat depthImageViewFormat;
   std::vector<AttachmentBlueprint> attachment;
   std::vector<SubpassBlueprint> subpass;
 
@@ -68,6 +78,20 @@ struct RenderpassBlueprint {
   RenderpassBlueprint(Device &device) {
     this->device = device.getLogicalDevice();
     this->swapChainImageViewFormat = device.getSwapChainImageFormat();
+    this->depthImageViewFormat =
+        uppexo::findDepthFormat(device.getPhysicalDevice());
+  }
+
+  int addAttachment(AttachmentBlueprint attachment) {
+    this->attachment.push_back(attachment);
+    return this->attachment.size() - 1;
+  }
+
+  void addSubpass(std::vector<int> colourAttachment, int depthAttachment = -1) {
+    uppexo::SubpassBlueprint subpassBlueprint;
+    subpassBlueprint.colourAttachment = colourAttachment;
+    subpassBlueprint.depthAttachment = depthAttachment;
+    subpass.push_back(subpassBlueprint);
   }
 };
 

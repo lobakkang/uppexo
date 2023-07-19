@@ -3,7 +3,7 @@
 
 uppexo::Framebuffer::Framebuffer(
     uppexo::FramebufferBlueprint framebufferBlueprint) {
-  uppexo::Log::GetInstance().logInfo("Creating Framebuffer\n");
+  uppexo::Log::GetInstance().logInfo("Creating %d Framebuffer\n", framebufferBlueprint.imageView.size());
 
   deviceHandle = framebufferBlueprint.device;
   framebuffer.resize(framebufferBlueprint.imageView.size());
@@ -12,7 +12,7 @@ uppexo::Framebuffer::Framebuffer(
     VkFramebufferCreateInfo framebufferInfo{};
     framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     framebufferInfo.renderPass = framebufferBlueprint.renderpass;
-    framebufferInfo.attachmentCount = 2;
+    framebufferInfo.attachmentCount = framebufferBlueprint.imageView[i].size();
     framebufferInfo.pAttachments = framebufferBlueprint.imageView[i].data();
     framebufferInfo.width = framebufferBlueprint.extend.width;
     framebufferInfo.height = framebufferBlueprint.extend.height;
@@ -31,8 +31,6 @@ uppexo::Framebuffer::~Framebuffer() {
     vkDestroyFramebuffer(deviceHandle, framebuffer, nullptr);
   }
 }
-
-int uppexo::Framebuffer::test() { return framebuffer.size(); }
 
 std::vector<VkFramebuffer> uppexo::Framebuffer::getFramebuffer() {
   return framebuffer;

@@ -29,10 +29,10 @@ uppexo::Buffer::Buffer(uppexo::BufferBlueprint bufferBlueprint) {
       uppexo::Log::GetInstance().logError("Failed to create buffer!\n");
     }
     bufferList.push_back(buffer);
+    bufferSizeList.push_back(cell.size);
     i++;
   }
 
-  // uppexo::Log::GetInstance().logVerbose("\n");
   bufferMemoryPairList.clear();
   uppexo::Log::GetInstance().logVerbose("Optimizing memory allocation\n");
   std::map<int, int> memoryMap;

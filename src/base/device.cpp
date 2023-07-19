@@ -27,9 +27,13 @@ uppexo::Device::Device(uppexo::DeviceBlueprint deviceBlueprint) {
   vkEnumeratePhysicalDevices(deviceBlueprint.instance, &deviceCount,
                              devices.data());
 
+  uppexo::Log::GetInstance().logVerbose(
+      "Queue Info: GRAPHIC: %d PRESENT: %d COMPUTE: %d TRANSFER: %d SPARSE: "
+      "%d\n",
+      deviceBlueprint.graphicQueue, deviceBlueprint.presentQueue,
+      deviceBlueprint.computeQueue, deviceBlueprint.transferQueue,
+      deviceBlueprint.sparseQueue);
   physicalDevice = VK_NULL_HANDLE;
-  uppexo::Log::GetInstance().logInfo("#N - %-10s - %-30s\n", "Vendor ID",
-                                     "Device Name");
   int index = 1;
   if (deviceBlueprint.graphicQueue > 0) {
     queueData[graphic] =
@@ -67,6 +71,8 @@ uppexo::Device::Device(uppexo::DeviceBlueprint deviceBlueprint) {
                     .queueFamilyID = 0};
   }
 
+  uppexo::Log::GetInstance().logInfo("#N - %-10s - %-30s\n", "Vendor ID",
+                                     "Device Name");
   for (const auto &device : devices) {
     for (auto it = queueData.begin(); it != queueData.end(); ++it) {
       it->second.queueFamilyID.reset();

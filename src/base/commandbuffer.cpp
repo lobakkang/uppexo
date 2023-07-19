@@ -43,6 +43,8 @@ VkCommandBuffer &uppexo::CommandBuffer::getBuffer(int id) {
   return commandBuffer[id];
 }
 
+
+
 VkCommandBuffer uppexo::CommandBuffer::createSingleUseCommandBuffer() {
   VkCommandBufferAllocateInfo allocInfo{};
   allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;

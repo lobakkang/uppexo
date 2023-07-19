@@ -9,7 +9,11 @@
 #include <GLFW/glfw3.h>
 
 namespace uppexo {
+class CommandBuffer;
+
 struct CommandBufferBlueprint {
+  using Component = CommandBuffer;
+
   int queueID = 0;
   VkQueue commandQueue;
   int bufferNum = 1;
@@ -28,6 +32,10 @@ struct CommandBufferBlueprint {
     this->device = device.getLogicalDevice();
     this->queueID = device.getQueue(type).queueFamilyID.value();
     this->commandQueue = device.getQueue(type).queue[0];
+  }
+
+  void setBufferNumber(int number) {
+    bufferNum = number;
   }
 };
 

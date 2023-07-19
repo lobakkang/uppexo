@@ -30,9 +30,9 @@ struct ImageCellBlueprint {
 
 namespace presetImageCellBlueprint {
 struct DepthImageCellBlueprint : ImageCellBlueprint {
-  DepthImageCellBlueprint(VkPhysicalDevice physicalDevice) {
+  DepthImageCellBlueprint() {
     aspect = VK_IMAGE_ASPECT_DEPTH_BIT;
-    format = uppexo::findDepthFormat(physicalDevice);
+    format = VK_FORMAT_UNDEFINED;
     usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
     location = ON_DEVICE_INVISIBLE_TO_HOST;
   }
@@ -59,7 +59,11 @@ struct TextureImageCellBlueprint : ImageCellBlueprint {
 };
 } // namespace presetImageCellBlueprint
 
+class Image;
+
 struct ImageBlueprint {
+  using Component = Image;
+
   std::vector<ImageCellBlueprint> imageCellBlueprint;
   VkDevice device;
   VkPhysicalDevice physicalDevice;
@@ -79,6 +83,13 @@ struct ImageBlueprint {
     this->extend = device.getSwapChainExtend();
     this->buffer = &buffer;
     this->commandBuffer = &commandBuffer;
+  }
+
+  void addImageCell(ImageCellBlueprint image) {
+    if (image.format == VK_FORMAT_UNDEFINED) {
+      image.format = uppexo::findDepthFormat(physicalDevice);
+    }
+    imageCellBlueprint.push_back(image);
   }
 };
 

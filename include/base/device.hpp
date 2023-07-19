@@ -10,12 +10,19 @@
 
 #include <map>
 #include <optional>
+#include <utils/log.hpp>
 #include <vector>
 
 namespace uppexo {
+enum QueueType { graphic, present, sparse, transfer, compute };
+
+class Device;
+
 struct DeviceBlueprint {
-  int graphicQueue = 1;
-  int presentQueue = 1;
+  using Component = Device;
+
+  int graphicQueue = 0;
+  int presentQueue = 0;
   int transferQueue = 0;
   int sparseQueue = 0;
   int computeQueue = 0;
@@ -35,10 +42,38 @@ struct DeviceBlueprint {
     this->IsValidationLayerEnable = instance.IsValidationLayerEnable();
     this->surface = instance.getSurface();
     this->IsGraphicEnable = instance.IsGraphicEnable();
+    this->isSwapchainRequire = instance.IsGraphicEnable();
+  }
+
+  std::tuple<QueueType, int> addQueue(QueueType type) {
+    int id = 0;
+    switch (type) {
+    case QueueType::sparse:
+      id = sparseQueue;
+      sparseQueue++;
+      break;
+    case QueueType::graphic:
+      id = graphicQueue;
+      graphicQueue++;
+      break;
+    case QueueType::transfer:
+      id = transferQueue;
+      transferQueue++;
+      break;
+    case QueueType::present:
+      id = presentQueue;
+      presentQueue++;
+      break;
+    case QueueType::compute:
+      id = computeQueue;
+      computeQueue++;
+      break;
+    default:
+      uppexo::Log::GetInstance().logError("ERROR UNKNOWN QUEUE TYPE\n");
+    }
+    return {type, id};
   }
 };
-
-enum QueueType { graphic, present, sparse, transfer, compute };
 
 struct QueueData {
   std::vector<VkQueue> queue;

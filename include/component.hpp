@@ -4,29 +4,23 @@
 #include <base/buffer.hpp>
 #include <base/commandbuffer.hpp>
 #include <base/device.hpp>
-#include <base/framebuffer.hpp>
-#include <base/graphicPipeline.hpp>
 #include <base/instance.hpp>
 #include <base/renderpass.hpp>
 #include <base/shader.hpp>
 #include <base/synchronizer.hpp>
 
-#include <memory>
-#include <variant>
+#include <functional>
 
-namespace uppexo {
-/*typedef std::variant<std::unique_ptr<Buffer>, std::unique_ptr<CommandBuffer>,
-                     std::unique_ptr<Device>, std::unique_ptr<Framebuffer>,
-                     std::unique_ptr<GraphicPipeline>,
-                     std::unique_ptr<Instance>, std::unique_ptr<Renderpass>,
-                     std::unique_ptr<Synchronizer>, Instance>
-    Component;
+namespace uppexo {}
 
-typedef std::variant<BufferBlueprint, CommandBufferBlueprint, DeviceBlueprint,
-                     FramebufferBlueprint, GraphicPipelineBlueprint,
-                     InstanceBlueprint, RenderpassBlueprint,
-                     SynchronizerBlueprint>
-    ComponentBlueprint;*/
-} // namespace uppexo
+template <typename tp> struct TrackedBlueprint : public tp {
+  template <typename... Args> TrackedBlueprint(Args &...args) : tp(args...) {}
+  using Component = typename tp::Component;
+
+  std::function<void(void)> create;
+  std::function<typename tp::Component&(void)> getComponent;
+
+  int componentID = 0;
+};
 
 #endif // !COMPONENT_H_

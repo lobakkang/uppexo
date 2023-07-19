@@ -198,19 +198,6 @@ uppexo/fast:
 .PHONY : uppexo/fast
 
 #=============================================================================
-# Target rules for targets named compute_array
-
-# Build rule for target.
-compute_array: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 compute_array
-.PHONY : compute_array
-
-# fast build rule for target.
-compute_array/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/compute_array.dir/build.make CMakeFiles/compute_array.dir/build
-.PHONY : compute_array/fast
-
-#=============================================================================
 # Target rules for targets named forward_rendering
 
 # Build rule for target.
@@ -561,30 +548,6 @@ src/base/synchronizer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/base/synchronizer.cpp.s
 .PHONY : src/base/synchronizer.cpp.s
 
-src/core/commandBufferRecorder.o: src/core/commandBufferRecorder.cpp.o
-.PHONY : src/core/commandBufferRecorder.o
-
-# target to build an object file
-src/core/commandBufferRecorder.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/commandBufferRecorder.cpp.o
-.PHONY : src/core/commandBufferRecorder.cpp.o
-
-src/core/commandBufferRecorder.i: src/core/commandBufferRecorder.cpp.i
-.PHONY : src/core/commandBufferRecorder.i
-
-# target to preprocess a source file
-src/core/commandBufferRecorder.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/commandBufferRecorder.cpp.i
-.PHONY : src/core/commandBufferRecorder.cpp.i
-
-src/core/commandBufferRecorder.s: src/core/commandBufferRecorder.cpp.s
-.PHONY : src/core/commandBufferRecorder.s
-
-# target to generate assembly for a file
-src/core/commandBufferRecorder.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/commandBufferRecorder.cpp.s
-.PHONY : src/core/commandBufferRecorder.cpp.s
-
 src/core/datatype.o: src/core/datatype.cpp.o
 .PHONY : src/core/datatype.o
 
@@ -633,53 +596,53 @@ src/core/mesh.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/mesh.cpp.s
 .PHONY : src/core/mesh.cpp.s
 
-src/engine/compute.o: src/engine/compute.cpp.o
-.PHONY : src/engine/compute.o
+src/core/present.o: src/core/present.cpp.o
+.PHONY : src/core/present.o
 
 # target to build an object file
-src/engine/compute.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/compute.cpp.o
-.PHONY : src/engine/compute.cpp.o
+src/core/present.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/present.cpp.o
+.PHONY : src/core/present.cpp.o
 
-src/engine/compute.i: src/engine/compute.cpp.i
-.PHONY : src/engine/compute.i
+src/core/present.i: src/core/present.cpp.i
+.PHONY : src/core/present.i
 
 # target to preprocess a source file
-src/engine/compute.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/compute.cpp.i
-.PHONY : src/engine/compute.cpp.i
+src/core/present.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/present.cpp.i
+.PHONY : src/core/present.cpp.i
 
-src/engine/compute.s: src/engine/compute.cpp.s
-.PHONY : src/engine/compute.s
+src/core/present.s: src/core/present.cpp.s
+.PHONY : src/core/present.s
 
 # target to generate assembly for a file
-src/engine/compute.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/compute.cpp.s
-.PHONY : src/engine/compute.cpp.s
+src/core/present.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/present.cpp.s
+.PHONY : src/core/present.cpp.s
 
-src/engine/deferred.o: src/engine/deferred.cpp.o
-.PHONY : src/engine/deferred.o
+src/core/sequence.o: src/core/sequence.cpp.o
+.PHONY : src/core/sequence.o
 
 # target to build an object file
-src/engine/deferred.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/deferred.cpp.o
-.PHONY : src/engine/deferred.cpp.o
+src/core/sequence.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/sequence.cpp.o
+.PHONY : src/core/sequence.cpp.o
 
-src/engine/deferred.i: src/engine/deferred.cpp.i
-.PHONY : src/engine/deferred.i
+src/core/sequence.i: src/core/sequence.cpp.i
+.PHONY : src/core/sequence.i
 
 # target to preprocess a source file
-src/engine/deferred.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/deferred.cpp.i
-.PHONY : src/engine/deferred.cpp.i
+src/core/sequence.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/sequence.cpp.i
+.PHONY : src/core/sequence.cpp.i
 
-src/engine/deferred.s: src/engine/deferred.cpp.s
-.PHONY : src/engine/deferred.s
+src/core/sequence.s: src/core/sequence.cpp.s
+.PHONY : src/core/sequence.s
 
 # target to generate assembly for a file
-src/engine/deferred.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/deferred.cpp.s
-.PHONY : src/engine/deferred.cpp.s
+src/core/sequence.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/sequence.cpp.s
+.PHONY : src/core/sequence.cpp.s
 
 src/engine/engine.o: src/engine/engine.cpp.o
 .PHONY : src/engine/engine.o
@@ -704,30 +667,6 @@ src/engine/engine.s: src/engine/engine.cpp.s
 src/engine/engine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/engine.cpp.s
 .PHONY : src/engine/engine.cpp.s
-
-src/engine/forward.o: src/engine/forward.cpp.o
-.PHONY : src/engine/forward.o
-
-# target to build an object file
-src/engine/forward.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/forward.cpp.o
-.PHONY : src/engine/forward.cpp.o
-
-src/engine/forward.i: src/engine/forward.cpp.i
-.PHONY : src/engine/forward.i
-
-# target to preprocess a source file
-src/engine/forward.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/forward.cpp.i
-.PHONY : src/engine/forward.cpp.i
-
-src/engine/forward.s: src/engine/forward.cpp.s
-.PHONY : src/engine/forward.s
-
-# target to generate assembly for a file
-src/engine/forward.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/engine/forward.cpp.s
-.PHONY : src/engine/forward.cpp.s
 
 src/uppexo.o: src/uppexo.cpp.o
 .PHONY : src/uppexo.o
@@ -825,30 +764,6 @@ src/utils/vulkan_util.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/utils/vulkan_util.cpp.s
 .PHONY : src/utils/vulkan_util.cpp.s
 
-tests/compute_array.o: tests/compute_array.cpp.o
-.PHONY : tests/compute_array.o
-
-# target to build an object file
-tests/compute_array.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/compute_array.dir/build.make CMakeFiles/compute_array.dir/tests/compute_array.cpp.o
-.PHONY : tests/compute_array.cpp.o
-
-tests/compute_array.i: tests/compute_array.cpp.i
-.PHONY : tests/compute_array.i
-
-# target to preprocess a source file
-tests/compute_array.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/compute_array.dir/build.make CMakeFiles/compute_array.dir/tests/compute_array.cpp.i
-.PHONY : tests/compute_array.cpp.i
-
-tests/compute_array.s: tests/compute_array.cpp.s
-.PHONY : tests/compute_array.s
-
-# target to generate assembly for a file
-tests/compute_array.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/compute_array.dir/build.make CMakeFiles/compute_array.dir/tests/compute_array.cpp.s
-.PHONY : tests/compute_array.cpp.s
-
 tests/forward_rendering.o: tests/forward_rendering.cpp.o
 .PHONY : tests/forward_rendering.o
 
@@ -888,7 +803,6 @@ help:
 	@echo "... test"
 	@echo "... Shaders"
 	@echo "... uninstall"
-	@echo "... compute_array"
 	@echo "... forward_rendering"
 	@echo "... tinyobjloader"
 	@echo "... uppexo"
@@ -931,27 +845,21 @@ help:
 	@echo "... src/base/synchronizer.o"
 	@echo "... src/base/synchronizer.i"
 	@echo "... src/base/synchronizer.s"
-	@echo "... src/core/commandBufferRecorder.o"
-	@echo "... src/core/commandBufferRecorder.i"
-	@echo "... src/core/commandBufferRecorder.s"
 	@echo "... src/core/datatype.o"
 	@echo "... src/core/datatype.i"
 	@echo "... src/core/datatype.s"
 	@echo "... src/core/mesh.o"
 	@echo "... src/core/mesh.i"
 	@echo "... src/core/mesh.s"
-	@echo "... src/engine/compute.o"
-	@echo "... src/engine/compute.i"
-	@echo "... src/engine/compute.s"
-	@echo "... src/engine/deferred.o"
-	@echo "... src/engine/deferred.i"
-	@echo "... src/engine/deferred.s"
+	@echo "... src/core/present.o"
+	@echo "... src/core/present.i"
+	@echo "... src/core/present.s"
+	@echo "... src/core/sequence.o"
+	@echo "... src/core/sequence.i"
+	@echo "... src/core/sequence.s"
 	@echo "... src/engine/engine.o"
 	@echo "... src/engine/engine.i"
 	@echo "... src/engine/engine.s"
-	@echo "... src/engine/forward.o"
-	@echo "... src/engine/forward.i"
-	@echo "... src/engine/forward.s"
 	@echo "... src/uppexo.o"
 	@echo "... src/uppexo.i"
 	@echo "... src/uppexo.s"
@@ -964,9 +872,6 @@ help:
 	@echo "... src/utils/vulkan_util.o"
 	@echo "... src/utils/vulkan_util.i"
 	@echo "... src/utils/vulkan_util.s"
-	@echo "... tests/compute_array.o"
-	@echo "... tests/compute_array.i"
-	@echo "... tests/compute_array.s"
 	@echo "... tests/forward_rendering.o"
 	@echo "... tests/forward_rendering.i"
 	@echo "... tests/forward_rendering.s"

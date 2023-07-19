@@ -8,7 +8,11 @@
 #include <GLFW/glfw3.h>
 
 namespace uppexo {
+class Synchronizer;
+
 struct SynchronizerBlueprint {
+  using Component = Synchronizer;
+
   int fence = 0;
   int semaphore = 0;
   int event = 0;
@@ -18,6 +22,21 @@ struct SynchronizerBlueprint {
   SynchronizerBlueprint() = default;
   SynchronizerBlueprint(Device &device) {
     this->device = device.getLogicalDevice();
+  }
+
+  int addFence() {
+    fence++;
+    return fence - 1;
+  }
+
+  int addSemaphore() {
+    semaphore++;
+    return semaphore - 1;
+  }
+
+  int addEvent() {
+    event++;
+    return event - 1;
   }
 };
 

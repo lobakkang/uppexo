@@ -1,70 +1,70 @@
-#ifndef ENGINE_H_
-#define ENGINE_H_
+#ifndef ENGINE_HPP_
+#define ENGINE_HPP_
 
-#include "base/instance.hpp"
 #include <any>
+#include <core/present.hpp>
+#include <base/descriptor.hpp>
+#include <base/framebuffer.hpp>
+#include <base/graphicPipeline.hpp>
 #include <component.hpp>
-#include <core/commandBufferRecorder.hpp>
-#include <functional>
 #include <memory>
-#include <utils/log.hpp>
+#include <tuple>
 #include <vector>
+#include <vulkan/vulkan_core.h>
+
+#include <core/sequence.hpp>
+
+typedef int UppexoHandle;
 
 namespace uppexo {
-template <typename Derived, typename DerivedBlueprint> class Engine {
+class Uppexo {
 public:
-  Engine() {
-    uppexo::Log::GetInstance().logInfo("Initialize uppexo engine\n");
-    componentList.clear();
-  };
+  Uppexo(VkExtent2D windowSize = {0, 0}, std::string title = "UPPEXO",
+         bool validationLayer = false);
+  ~Uppexo();
+  TrackedBlueprint<DeviceBlueprint> addDevice();
+  TrackedBlueprint<BufferBlueprint>
+  addBuffer(TrackedBlueprint<DeviceBlueprint> &device);
+  TrackedBlueprint<SamplerBlueprint>
+  addSampler(TrackedBlueprint<DeviceBlueprint> &device);
+  TrackedBlueprint<CommandBufferBlueprint>
+  addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device);
+  TrackedBlueprint<RenderpassBlueprint>
+  addRenderPass(TrackedBlueprint<DeviceBlueprint> &device);
+  TrackedBlueprint<ImageBlueprint>
+  addImage(TrackedBlueprint<DeviceBlueprint> &device,
+           TrackedBlueprint<CommandBufferBlueprint> &commandBuffer,
+           TrackedBlueprint<BufferBlueprint> &buffer);
+  TrackedBlueprint<FramebufferBlueprint>
+  addFrameBuffer(TrackedBlueprint<DeviceBlueprint> &device,
+                 TrackedBlueprint<RenderpassBlueprint> &renderPass);
+  TrackedBlueprint<DescriptorSetBlueprint>
+  addDescriptorSet(TrackedBlueprint<DeviceBlueprint> &device);
+  TrackedBlueprint<GraphicPipelineBlueprint>
+  addGraphicPipeline(TrackedBlueprint<DeviceBlueprint> &device,
+                     TrackedBlueprint<RenderpassBlueprint> &renderPass,
+                     TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet);
+  TrackedBlueprint<SynchronizerBlueprint>
+  addSynchronizer(TrackedBlueprint<DeviceBlueprint> &device);
 
-  ~Engine() {
-    uppexo::Log::GetInstance().logInfo("Shutting down engine\n");
-    std::for_each(
-        componentList.rbegin(), componentList.rend(),
-        [](std::unique_ptr<void, void (*)(void *)> &i) { i.reset(); });
-  };
-
-  virtual void run() {
-    uppexo::Log::GetInstance().logError(
-        "Invalid engine: empty main loop (DEV FAULT)\n");
-  };
-
-  static std::unique_ptr<Derived> create(DerivedBlueprint blueprint) {
-    std::unique_ptr<Derived> obj = std::make_unique<Derived>(blueprint);
-    obj->buildComponent();
-    obj->prerecordCommandBuffer();
-    return obj;
-  }
+  Sequence &addSequence();
+  bool isRunning();
 
   template <typename T> inline T &getComponent(int id) {
     return *static_cast<T *>(componentList[id].get());
-  }
-
-  std::function<void(Derived &)> earlyLoopFunction;
-  std::function<void(Derived &)> endLoopFunction;
-
-protected:
-  virtual void buildComponent() {
-    uppexo::Log::GetInstance().logError(
-        "Invalid engine: empty component build function (DEV FAULT)\n");
   };
 
-  virtual void prerecordCommandBuffer() {
-    uppexo::Log::GetInstance().logError(
-        "Invalid engine: empty prerecord command buffer function (DEV "
-        "FAULT)\n");
-  }
+private:
+  // blueprint, component, dependency, completed?
+  std::vector<std::unique_ptr<void, void (*)(void *)>> componentList;
+  std::vector<Sequence> sequenceList;
 
-  template <typename Ta, typename Tb> inline int addComponent(Tb blueprint) {
+  template <typename Ta, typename Tb> inline int addComponent(Tb &blueprint) {
     componentList.emplace_back(new Ta(blueprint),
                                [](void *p) { delete static_cast<Ta *>(p); });
     return componentList.size() - 1;
   }
-
-  std::vector<std::unique_ptr<void, void (*)(void *)>> componentList;
-  std::vector<std::function<void(std::any)>> recorderList;
 };
 } // namespace uppexo
 
-#endif // !ENGINE_H_
+#endif // !ENGINE_HPP_

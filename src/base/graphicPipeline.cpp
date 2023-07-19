@@ -10,22 +10,30 @@ uppexo::GraphicPipeline::GraphicPipeline(
   // uppexo::Log::GetInstance().logVerbose("\n");
   VkShaderModule vertShaderModule;
   VkShaderModule fragShaderModule;
-  if (!pipelineBlueprint.directRead) {
-    uppexo::Log::GetInstance().logVerbose("Loading shader binaries from file\n");
+  if (!pipelineBlueprint.vertexDirectRead) {
+    uppexo::Log::GetInstance().logVerbose(
+        "Loading vertex shader binaries from file\n");
     std::vector<char> vertexShader =
         uppexo::readFile(pipelineBlueprint.VertexShader);
-    std::vector<char> fragmentShader =
-        uppexo::readFile(pipelineBlueprint.FragmentShader);
     vertShaderModule = uppexo::createShaderModule(
         deviceHandle, vertexShader.data(), vertexShader.size());
+  } else {
+    uppexo::Log::GetInstance().logVerbose(
+        "Loading vertex shader binaries from source code\n");
+    vertShaderModule = uppexo::createShaderModule(
+        deviceHandle, pipelineBlueprint.VertexShaderCode,
+        pipelineBlueprint.VertexShaderLen);
+  }
+  if (!pipelineBlueprint.fragmentDirectRead) {
+    uppexo::Log::GetInstance().logVerbose(
+        "Loading fragment shader binaries from file\n");
+    std::vector<char> fragmentShader =
+        uppexo::readFile(pipelineBlueprint.FragmentShader);
     fragShaderModule = uppexo::createShaderModule(
         deviceHandle, fragmentShader.data(), fragmentShader.size());
   } else {
     uppexo::Log::GetInstance().logVerbose(
-        "Loading shader binaries from source code\n");
-    vertShaderModule = uppexo::createShaderModule(
-        deviceHandle, pipelineBlueprint.VertexShaderCode,
-        pipelineBlueprint.VertexShaderLen);
+        "Loading fragment shader binaries from source code\n");
     fragShaderModule = uppexo::createShaderModule(
         deviceHandle, pipelineBlueprint.FragmentShaderCode,
         pipelineBlueprint.FragmentShaderLen);

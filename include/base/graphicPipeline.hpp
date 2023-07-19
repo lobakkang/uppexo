@@ -11,13 +11,18 @@
 #include <base/renderpass.hpp>
 
 namespace uppexo {
+class GraphicPipeline;
+
 struct GraphicPipelineBlueprint {
+  using Component = GraphicPipeline;
+
   std::string VertexShader = "./main.vs";
   std::string FragmentShader = "./main.fs";
   std::vector<VkVertexInputBindingDescription> bindingDescription;
   std::vector<VkVertexInputAttributeDescription> attributeDescription;
   bool isDepthEnable = false;
-  bool directRead = false;
+  bool vertexDirectRead = false;
+  bool fragmentDirectRead = false;
   VkDevice device;
   VkRenderPass renderpass;
 
@@ -44,6 +49,28 @@ struct GraphicPipelineBlueprint {
     this->device = device.getLogicalDevice();
     this->renderpass = renderpass.getRenderPass();
     this->descriptorSet = &descriptor;
+  }
+
+  void addVertexShaderFromFile(std::string path) {
+    vertexDirectRead = false;
+    VertexShader = path;
+  }
+
+  void addFragmentShaderFromFile(std::string path) {
+    fragmentDirectRead = false;
+    FragmentShader = path;
+  }
+
+  void addVertexShaderFromCode(char* code, int len) {
+    vertexDirectRead = true;
+    VertexShaderCode = code;
+    VertexShaderLen = len;
+  }
+
+  void addFragmentShaderFromCode(char* code, int len) {
+    fragmentDirectRead = true;
+    FragmentShaderCode = code;
+    FragmentShaderLen = len;
   }
 };
 
