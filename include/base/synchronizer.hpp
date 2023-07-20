@@ -45,6 +45,7 @@ public:
   Synchronizer(SynchronizerBlueprint synchronizerBlueprint);
   ~Synchronizer();
   void waitForFence(std::vector<int> fenceList, bool waitAll);
+  void resetFence(std::vector<int> fenceList);
   VkFence &getFence(int fenceID);
   VkSemaphore &getSemaphore(int semaphoreID);
 

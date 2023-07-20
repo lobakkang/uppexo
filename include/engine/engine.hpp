@@ -6,6 +6,7 @@
 #include <base/descriptor.hpp>
 #include <base/framebuffer.hpp>
 #include <base/graphicPipeline.hpp>
+#include <base/computePipeline.hpp>
 #include <component.hpp>
 #include <memory>
 #include <tuple>
@@ -28,7 +29,7 @@ public:
   TrackedBlueprint<SamplerBlueprint>
   addSampler(TrackedBlueprint<DeviceBlueprint> &device);
   TrackedBlueprint<CommandBufferBlueprint>
-  addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device);
+  addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device, std::tuple<QueueType, int> queue = {QueueType::graphic, 0});
   TrackedBlueprint<RenderpassBlueprint>
   addRenderPass(TrackedBlueprint<DeviceBlueprint> &device);
   TrackedBlueprint<ImageBlueprint>
@@ -43,6 +44,9 @@ public:
   TrackedBlueprint<GraphicPipelineBlueprint>
   addGraphicPipeline(TrackedBlueprint<DeviceBlueprint> &device,
                      TrackedBlueprint<RenderpassBlueprint> &renderPass,
+                     TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet);
+  TrackedBlueprint<ComputePipelineBlueprint>
+  addComputePipeline(TrackedBlueprint<DeviceBlueprint> &device,
                      TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet);
   TrackedBlueprint<SynchronizerBlueprint>
   addSynchronizer(TrackedBlueprint<DeviceBlueprint> &device);

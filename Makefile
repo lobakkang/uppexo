@@ -198,6 +198,19 @@ uppexo/fast:
 .PHONY : uppexo/fast
 
 #=============================================================================
+# Target rules for targets named compute_array
+
+# Build rule for target.
+compute_array: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 compute_array
+.PHONY : compute_array
+
+# fast build rule for target.
+compute_array/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compute_array.dir/build.make CMakeFiles/compute_array.dir/build
+.PHONY : compute_array/fast
+
+#=============================================================================
 # Target rules for targets named forward_rendering
 
 # Build rule for target.
@@ -764,6 +777,30 @@ src/utils/vulkan_util.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/utils/vulkan_util.cpp.s
 .PHONY : src/utils/vulkan_util.cpp.s
 
+tests/compute_array.o: tests/compute_array.cpp.o
+.PHONY : tests/compute_array.o
+
+# target to build an object file
+tests/compute_array.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compute_array.dir/build.make CMakeFiles/compute_array.dir/tests/compute_array.cpp.o
+.PHONY : tests/compute_array.cpp.o
+
+tests/compute_array.i: tests/compute_array.cpp.i
+.PHONY : tests/compute_array.i
+
+# target to preprocess a source file
+tests/compute_array.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compute_array.dir/build.make CMakeFiles/compute_array.dir/tests/compute_array.cpp.i
+.PHONY : tests/compute_array.cpp.i
+
+tests/compute_array.s: tests/compute_array.cpp.s
+.PHONY : tests/compute_array.s
+
+# target to generate assembly for a file
+tests/compute_array.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/compute_array.dir/build.make CMakeFiles/compute_array.dir/tests/compute_array.cpp.s
+.PHONY : tests/compute_array.cpp.s
+
 tests/forward_rendering.o: tests/forward_rendering.cpp.o
 .PHONY : tests/forward_rendering.o
 
@@ -803,6 +840,7 @@ help:
 	@echo "... test"
 	@echo "... Shaders"
 	@echo "... uninstall"
+	@echo "... compute_array"
 	@echo "... forward_rendering"
 	@echo "... tinyobjloader"
 	@echo "... uppexo"
@@ -872,6 +910,9 @@ help:
 	@echo "... src/utils/vulkan_util.o"
 	@echo "... src/utils/vulkan_util.i"
 	@echo "... src/utils/vulkan_util.s"
+	@echo "... tests/compute_array.o"
+	@echo "... tests/compute_array.i"
+	@echo "... tests/compute_array.s"
 	@echo "... tests/forward_rendering.o"
 	@echo "... tests/forward_rendering.i"
 	@echo "... tests/forward_rendering.s"

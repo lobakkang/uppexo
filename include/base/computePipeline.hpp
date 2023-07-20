@@ -11,7 +11,11 @@
 #include <base/renderpass.hpp>
 
 namespace uppexo {
+class ComputePipeline;
+
 struct ComputePipelineBlueprint {
+  using Component = ComputePipeline;
+
   std::string ComputeShader = "./main.vs";
   std::vector<VkVertexInputBindingDescription> bindingDescription;
   std::vector<VkVertexInputAttributeDescription> attributeDescription;
@@ -37,6 +41,17 @@ struct ComputePipelineBlueprint {
     attributeDescription = FullVertex::getAttributeDescriptions();
     this->device = device.getLogicalDevice();
     this->descriptorSet = &descriptor;
+  }
+
+  void addShaderFromFile(std::string path) {
+    directRead = false;
+    ComputeShader = path;
+  }
+
+  void addShaderFromCode(char* code, int len) {
+    directRead = true;
+    ComputeShaderCode = code;
+    ComputeShaderLen = len;
   }
 };
 

@@ -70,9 +70,9 @@ uppexo::Uppexo::addSynchronizer(TrackedBlueprint<DeviceBlueprint> &device) {
 }
 
 TrackedBlueprint<uppexo::CommandBufferBlueprint>
-uppexo::Uppexo::addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device) {
+uppexo::Uppexo::addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device, std::tuple<QueueType, int> queue) {
   TrackedBlueprint<uppexo::CommandBufferBlueprint> blueprint(
-      getComponent<Device>(device.componentID));
+      getComponent<Device>(device.componentID), std::get<0>(queue));
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
     this->addComponent<CommandBuffer>(blueprint);
@@ -160,6 +160,23 @@ uppexo::Uppexo::addGraphicPipeline(
   };
   blueprint.getComponent = [this, &blueprint]() -> GraphicPipeline & {
     return this->getComponent<GraphicPipeline>(blueprint.componentID);
+  };
+  return blueprint;
+}
+
+TrackedBlueprint<uppexo::ComputePipelineBlueprint>
+uppexo::Uppexo::addComputePipeline(
+    TrackedBlueprint<DeviceBlueprint> &device,
+    TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet) {
+  TrackedBlueprint<uppexo::ComputePipelineBlueprint> blueprint(
+      getComponent<Device>(device.componentID),
+      getComponent<DescriptorSet>(descriptorSet.componentID));
+  blueprint.create = [this, &blueprint]() {
+    blueprint.componentID = this->componentList.size();
+    this->addComponent<ComputePipeline>(blueprint);
+  };
+  blueprint.getComponent = [this, &blueprint]() -> ComputePipeline & {
+    return this->getComponent<ComputePipeline>(blueprint.componentID);
   };
   return blueprint;
 }

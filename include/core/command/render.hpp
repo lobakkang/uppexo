@@ -143,9 +143,9 @@ private:
   VkBuffer buffer;
 };
 
-class BindDescriptorSet : public Command {
+class BindGraphicDescriptorSet : public Command {
 public:
-  BindDescriptorSet(TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet,
+  BindGraphicDescriptorSet(TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet,
                     TrackedBlueprint<GraphicPipelineBlueprint> &graphicPipeline,
                     int &setID)
       : Command() {

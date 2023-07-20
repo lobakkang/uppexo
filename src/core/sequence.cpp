@@ -71,10 +71,14 @@ template int uppexo::Sequence::add<uppexo::command::EndRecorder>(
     uppexo::command::EndRecorder cmd);
 template int uppexo::Sequence::add<uppexo::command::EndRenderPass>(
     uppexo::command::EndRenderPass cmd);
+template int uppexo::Sequence::add<uppexo::command::BindComputePipeline>(
+    uppexo::command::BindComputePipeline cmd);
 template int uppexo::Sequence::add<uppexo::command::BindGraphicPipeline>(
     uppexo::command::BindGraphicPipeline cmd);
-template int uppexo::Sequence::add<uppexo::command::BindDescriptorSet>(
-    uppexo::command::BindDescriptorSet cmd);
+template int uppexo::Sequence::add<uppexo::command::BindGraphicDescriptorSet>(
+    uppexo::command::BindGraphicDescriptorSet cmd);
+template int uppexo::Sequence::add<uppexo::command::BindComputeDescriptorSet>(
+    uppexo::command::BindComputeDescriptorSet cmd);
 template int uppexo::Sequence::add<uppexo::command::BindVertexBuffer>(
     uppexo::command::BindVertexBuffer cmd);
 template int uppexo::Sequence::add<uppexo::command::SetScissor>(
@@ -83,3 +87,5 @@ template int uppexo::Sequence::add<uppexo::command::SetViewport>(
     uppexo::command::SetViewport cmd);
 template int uppexo::Sequence::add<uppexo::command::IndexedDraw>(
     uppexo::command::IndexedDraw cmd);
+template int uppexo::Sequence::add<uppexo::command::DispatchCompute>(
+    uppexo::command::DispatchCompute cmd);

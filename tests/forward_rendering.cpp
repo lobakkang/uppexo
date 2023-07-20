@@ -112,7 +112,7 @@ int main(void) {
   sequence.add(uppexo::command::BindVertexBuffer(buffer, vertexBuffer));
   sequence.add(uppexo::command::SetViewport(device));
   sequence.add(uppexo::command::SetScissor(device));
-  sequence.add(uppexo::command::BindDescriptorSet(descriptorSet,
+  sequence.add(uppexo::command::BindGraphicDescriptorSet(descriptorSet,
                                                   graphicPipeline, frame));
   sequence.add(
       uppexo::command::IndexedDraw(buffer, indexBuffer, mesh.getIndexCount()));

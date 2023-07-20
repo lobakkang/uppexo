@@ -4,6 +4,7 @@
 #include <base/commandbuffer.hpp>
 #include <component.hpp>
 #include <core/command/general.hpp>
+#include <core/command/compute.hpp>
 #include <core/command/render.hpp>
 #include <functional>
 #include <memory>

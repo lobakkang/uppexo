@@ -15,6 +15,8 @@ public:
   virtual void execute(VkCommandBuffer commandBuffer) {
     uppexo::Log::GetInstance().logError("ERROR empty command is executed\n");
   };
+
+  Command& operator=(const Command& other) = delete;
 };
 
 class BeginRecorder : public Command {

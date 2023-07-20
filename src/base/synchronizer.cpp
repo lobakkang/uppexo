@@ -56,6 +56,14 @@ void uppexo::Synchronizer::waitForFence(std::vector<int> fenceList,
 VkFence &uppexo::Synchronizer::getFence(int fenceID) {
   return fenceList[fenceID];
 }
+
 VkSemaphore &uppexo::Synchronizer::getSemaphore(int semaphoreID) {
   return semaphoreList[semaphoreID];
+}
+
+void uppexo::Synchronizer::resetFence(std::vector<int> fenceList) {
+  std::vector<VkFence> fenceHandleList(fenceList.size());
+  std::transform(fenceList.begin(), fenceList.end(), fenceHandleList.begin(),
+                 [&](int index) { return this->fenceList[index]; });
+  vkResetFences(deviceHandle, fenceList.size(), &fenceHandleList[0]);
 }
