@@ -19,26 +19,26 @@ void uppexo::Sequence::execute(
     int commandBufferID, TrackedBlueprint<DeviceBlueprint> &device,
     std::tuple<QueueType, int> queue,
     TrackedBlueprint<SynchronizerBlueprint> &synchronizer,
-    std::vector<int> waitSemaphoresID, std::vector<int> signalSemaphoresID,
+    std::vector<std::tuple<int, VkPipelineStageFlags>> waitSemaphoresID, std::vector<int> signalSemaphoresID,
     int fenceID) {
   VkSubmitInfo submitInfo{};
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
   std::vector<VkSemaphore> waitSemaphores;
   std::vector<VkSemaphore> signalSemaphores;
-  for (int semaphore : waitSemaphoresID) {
+  std::vector<VkPipelineStageFlags> waitStages;
+  for (auto semaphore : waitSemaphoresID) {
     waitSemaphores.push_back(
-        synchronizer.getComponent().getSemaphore(semaphore));
+        synchronizer.getComponent().getSemaphore(std::get<0>(semaphore)));
+    waitStages.push_back(std::get<1>(semaphore));
   }
   for (int semaphore : signalSemaphoresID) {
     signalSemaphores.push_back(
         synchronizer.getComponent().getSemaphore(semaphore));
   }
-  VkPipelineStageFlags waitStages[] = {
-      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   submitInfo.waitSemaphoreCount = waitSemaphores.size();
   submitInfo.pWaitSemaphores = waitSemaphores.data();
-  submitInfo.pWaitDstStageMask = waitStages;
+  submitInfo.pWaitDstStageMask = waitStages.data();
 
   submitInfo.commandBufferCount = 1;
   submitInfo.pCommandBuffers =

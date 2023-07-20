@@ -17,7 +17,7 @@ public:
   void execute(TrackedBlueprint<CommandBufferBlueprint> &commandBuffer,
                int commandBufferID, TrackedBlueprint<DeviceBlueprint> &device, std::tuple<QueueType, int> queue,
                TrackedBlueprint<SynchronizerBlueprint> &synchronizer,
-               std::vector<int> waitSemaphoresID,
+               std::vector<std::tuple<int, VkPipelineStageFlags>> waitSemaphoresID,
                std::vector<int> signalSemaphoresID, int fenceID);
 
   template <typename Ta> int add(Ta cmd);

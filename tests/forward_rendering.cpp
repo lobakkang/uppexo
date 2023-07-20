@@ -164,7 +164,7 @@ int main(void) {
 
     sequence.record(commandBuffer, frame);
     sequence.execute(commandBuffer, frame, device, graphicQueue, synchronizer,
-                     {IMAGE_AVAILABLE_SEMAPHORE + frame},
+                     {{IMAGE_AVAILABLE_SEMAPHORE + frame, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}},
                      {RENDER_FINISH_SEMAPHORE + frame}, frame);
 
     uppexo::Present::presentImage(device, synchronizer,
