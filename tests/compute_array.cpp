@@ -54,8 +54,11 @@ int main(void) {
     data.push_back(i);
   }
   uppexo::Log::GetInstance().logInfo("Before:\n");
-  for (int i = 0; i < 100; i++) {
-    std::cout << data[i] << " ";
+  for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
+      std::cout << data[i * 10 + j] << " ";
+    }
+    std::cout << std::endl;
   }
   std::cout << std::endl;
 
@@ -69,8 +72,11 @@ int main(void) {
   buffer.getComponent().copyOutByMapping(1, data.data(), sizeof(float) * 100);
 
   uppexo::Log::GetInstance().logInfo("After:\n");
-  for (int i = 0; i < 100; i++) {
-    std::cout << data[i] << " ";
+  for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
+      std::cout << data[i * 10 + j] << " ";
+    }
+    std::cout << std::endl;
   }
   std::cout << std::endl;
 }
