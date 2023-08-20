@@ -87,6 +87,20 @@ inline void transitionImageLayout(VkCommandBuffer commandBuffer, VkImage image,
 
     sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
     destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+  } else if (newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
+             oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+    barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+    barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+    sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+  } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
+             newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+    barrier.dstAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+    barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+    destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
   } else {
     uppexo::Log::GetInstance().logError("Unsupported layout transition!\n");
   }
@@ -110,6 +124,22 @@ inline void copyBufferToImage(VkCommandBuffer commandBuffer, VkBuffer buffer,
 
   vkCmdCopyBufferToImage(commandBuffer, buffer, image,
                          VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+}
+
+inline void copyImageToBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer,
+                              VkImage image, uint32_t width, uint32_t height,
+                              VkImageSubresourceLayers subresource) {
+  VkBufferImageCopy copyRegion = {};
+  copyRegion.bufferOffset = 0;
+  copyRegion.bufferRowLength = 0;
+  copyRegion.bufferImageHeight = 0;
+  copyRegion.imageSubresource = subresource;
+  copyRegion.imageOffset = {0, 0, 0};
+  copyRegion.imageExtent = {width, height, 1};
+
+  vkCmdCopyImageToBuffer(commandBuffer, image,
+                         VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, buffer, 1,
+                         &copyRegion);
 }
 
 inline void bindGraphicPipeline(VkCommandBuffer commandbuffer,

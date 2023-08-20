@@ -35,10 +35,7 @@ CMakeCache.txt
 compile_commands.json
 uppexo_demo
 renderdoc.cap
-CMakeFiles/*
-shaders/*
-*.vs
-*.fs
+# CMakeFiles/*.spv
 
 install_manifest.txt
 *.vim

@@ -1,9 +1,15 @@
 #include <base/image.hpp>
 #include <core/commandBufferRecorder.hpp>
 #include <cstddef>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+#include <core/command/transfer.hpp>
+#include <memory>
 #include <utils/log.hpp>
+
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
+#include <stb/stb_image_write.h>
+#include <stb/stb_image.h>
 
 uppexo::Image::Image(uppexo::ImageBlueprint blueprint) {
   uppexo::Log::GetInstance().logInfo("Creating image\n");
@@ -78,7 +84,10 @@ uppexo::Image::Image(uppexo::ImageBlueprint blueprint) {
       vkBindImageMemory(device, imageCell.image[i], imageCell.memory,
                         memRequirements.size * i);
     }
-    imageList.push_back(imageCell);
+    imageCell.size = cellBlueprint.size;
+    imageCell.aspect = cellBlueprint.aspect;
+    imageCell.format = cellBlueprint.format;
+    imageCell.layout = VK_IMAGE_LAYOUT_UNDEFINED;
 
     for (int i = 0; i < cellBlueprint.num; i++) {
       if (cellBlueprint.path != "") {
@@ -113,8 +122,10 @@ uppexo::Image::Image(uppexo::ImageBlueprint blueprint) {
             VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         blueprint.commandBuffer->submitSingleUseCommandBuffer(
             singleUseCommandBuffer);
+        imageCell.layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
       }
     }
+    imageList.push_back(imageCell);
   }
 
   uppexo::Log::GetInstance().logVerbose("Creating image view\n");
@@ -165,4 +176,54 @@ uppexo::Image::~Image() {
 
 std::vector<VkImageView> uppexo::Image::getImageView(int cellID) {
   return imageList[cellID].imageView;
+}
+
+std::vector<VkImage> uppexo::Image::getImage(int cellID) {
+  return imageList[cellID].image;
+}
+
+void uppexo::Image::exportImageToFile(std::string path,
+                                      CommandBuffer &commandBuffer,
+                                      Buffer &buffer, int imageCellID,
+                                      int imageID) {
+  uppexo::Log::GetInstance().logInfo("Exporting image to file\n");
+  uppexo::Log::GetInstance().logVerbose("Copying image to staging buffer\n");
+  VkCommandBuffer singleUseCommandBuffer =
+      commandBuffer.createSingleUseCommandBuffer();
+
+  VkImageSubresourceLayers subresource;
+  subresource.mipLevel = 0;
+  subresource.aspectMask = imageList[imageCellID].aspect;
+  subresource.layerCount = 1;
+  subresource.baseArrayLayer = 0;
+
+  uppexo::command::transitionImageLayout(
+      singleUseCommandBuffer, imageList[imageCellID].image[imageID],
+      imageList[imageCellID].format, imageList[imageCellID].layout,
+      VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+  uppexo::command::copyImageToBuffer(
+      singleUseCommandBuffer, buffer.getBuffer(buffer.getStagingBufferID()),
+      imageList[imageCellID].image[imageID], imageList[imageCellID].size.width,
+      imageList[imageCellID].size.height, subresource);
+  uppexo::command::transitionImageLayout(
+      singleUseCommandBuffer, imageList[imageCellID].image[imageID],
+      imageList[imageCellID].format, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+      imageList[imageCellID].layout);
+
+  commandBuffer.submitSingleUseCommandBuffer(singleUseCommandBuffer);
+
+  int height = imageList[imageCellID].size.height;
+  int width = imageList[imageCellID].size.width;
+  int size = height * width * 4;
+  std::vector<char> data;
+  data.resize(size);
+  buffer.copyOutByMapping(buffer.getStagingBufferID(), data.data(), size);
+
+  int result = stbi_write_png(path.c_str(), width, height, 4, data.data(), 0);
+
+  if (result != 0) {
+    uppexo::Log::GetInstance().logInfo("Exporting success\n");
+  } else {
+    uppexo::Log::GetInstance().logInfo("Exporting failed\n");
+  }
 }

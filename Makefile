@@ -224,6 +224,19 @@ forward_rendering/fast:
 .PHONY : forward_rendering/fast
 
 #=============================================================================
+# Target rules for targets named offscreen_rendering
+
+# Build rule for target.
+offscreen_rendering: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 offscreen_rendering
+.PHONY : offscreen_rendering
+
+# fast build rule for target.
+offscreen_rendering/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/offscreen_rendering.dir/build.make CMakeFiles/offscreen_rendering.dir/build
+.PHONY : offscreen_rendering/fast
+
+#=============================================================================
 # Target rules for targets named tinyobjloader
 
 # Build rule for target.
@@ -825,6 +838,30 @@ tests/forward_rendering.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/forward_rendering.dir/build.make CMakeFiles/forward_rendering.dir/tests/forward_rendering.cpp.s
 .PHONY : tests/forward_rendering.cpp.s
 
+tests/offscreen_rendering.o: tests/offscreen_rendering.cpp.o
+.PHONY : tests/offscreen_rendering.o
+
+# target to build an object file
+tests/offscreen_rendering.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/offscreen_rendering.dir/build.make CMakeFiles/offscreen_rendering.dir/tests/offscreen_rendering.cpp.o
+.PHONY : tests/offscreen_rendering.cpp.o
+
+tests/offscreen_rendering.i: tests/offscreen_rendering.cpp.i
+.PHONY : tests/offscreen_rendering.i
+
+# target to preprocess a source file
+tests/offscreen_rendering.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/offscreen_rendering.dir/build.make CMakeFiles/offscreen_rendering.dir/tests/offscreen_rendering.cpp.i
+.PHONY : tests/offscreen_rendering.cpp.i
+
+tests/offscreen_rendering.s: tests/offscreen_rendering.cpp.s
+.PHONY : tests/offscreen_rendering.s
+
+# target to generate assembly for a file
+tests/offscreen_rendering.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/offscreen_rendering.dir/build.make CMakeFiles/offscreen_rendering.dir/tests/offscreen_rendering.cpp.s
+.PHONY : tests/offscreen_rendering.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -842,6 +879,7 @@ help:
 	@echo "... uninstall"
 	@echo "... compute_array"
 	@echo "... forward_rendering"
+	@echo "... offscreen_rendering"
 	@echo "... tinyobjloader"
 	@echo "... uppexo"
 	@echo "... src/base/buffer.o"
@@ -916,6 +954,9 @@ help:
 	@echo "... tests/forward_rendering.o"
 	@echo "... tests/forward_rendering.i"
 	@echo "... tests/forward_rendering.s"
+	@echo "... tests/offscreen_rendering.o"
+	@echo "... tests/offscreen_rendering.i"
+	@echo "... tests/offscreen_rendering.s"
 .PHONY : help
 
 

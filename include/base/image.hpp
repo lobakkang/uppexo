@@ -52,7 +52,7 @@ struct TextureImageCellBlueprint : ImageCellBlueprint {
     this->size.height = texHeight;
     this->aspect = VK_IMAGE_ASPECT_COLOR_BIT;
     this->format = VK_FORMAT_R8G8B8A8_SRGB;
-    this->usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+    this->usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
     this->location = ON_DEVICE_INVISIBLE_TO_HOST;
     this->path = path;
   }
@@ -94,6 +94,11 @@ struct ImageBlueprint {
 };
 
 struct ImageCell {
+  VkExtent2D size;
+  VkImageAspectFlags aspect;
+  VkFormat format;
+  VkImageLayout layout;
+
   VkDeviceMemory memory;
   std::vector<VkImage> image;
   std::vector<VkImageView> imageView;
@@ -104,6 +109,12 @@ public:
   Image(ImageBlueprint blueprint);
   ~Image();
   std::vector<VkImageView> getImageView(int cellID);
+  std::vector<VkImage> getImage(int cellID);
+  VkFormat getFormat(int cellID) { return imageList[cellID].format; };
+  VkImageAspectFlags getAspect(int cellID) { return imageList[cellID].aspect; };
+  VkExtent2D getSize(int cellID) { return imageList[cellID].size; };
+  void exportImageToFile(std::string path, CommandBuffer &commandBuffer,
+                         Buffer &buffer, int imageCellID, int imageID);
 
 private:
   std::vector<ImageCell> imageList;
