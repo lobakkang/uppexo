@@ -103,26 +103,35 @@ public:
   Buffer(BufferBlueprint bufferBlueprint);
   ~Buffer();
 
-  void copyByMapping(int id, void *data, unsigned int size, unsigned int offset = 0);
-  void copyOutByMapping(int id, void *data, unsigned int size, unsigned int offset = 0);
-  void copyByStaging(int id, void *data, unsigned int size, unsigned int offset = 0);
-  void copyOutByStaging(int id, void *data, unsigned int size, unsigned int offset = 0);
+  int addBuffer(BufferCellBlueprint cell);
+  void deleteBuffer(int id);
+
+  void copyByMapping(int id, void *data, unsigned int size,
+                     unsigned int offset = 0);
+  void copyOutByMapping(int id, void *data, unsigned int size,
+                        unsigned int offset = 0);
+  void copyByStaging(int id, void *data, unsigned int size,
+                     unsigned int offset = 0);
+  void copyOutByStaging(int id, void *data, unsigned int size,
+                        unsigned int offset = 0);
   // void* mapBuffer(int id);
   // void demapBuffer(int id);
-  VkBuffer &getBuffer(int id);
-  int getBufferSize(int id) {
-    return bufferSizeList[id];
-  };
-  int getStagingBufferID();
+  VkBuffer &getBuffer(int id) { return bufferList[id]; }
+  int getBufferSize(int id) { return bufferSizeList[id]; };
+  int getStagingBufferID() { return stagingBufferID; }
 
 private:
+  int stagingBufferID = 0;
+
   std::vector<BufferCellBlueprint> cellList;
   std::vector<int> bufferOffsetList;
   std::vector<int> bufferMemoryPairList;
   std::vector<VkBuffer> bufferList;
   std::vector<int> bufferSizeList;
   std::map<int, VkDeviceMemory> memoryList;
+
   VkDevice deviceHandle;
+  VkPhysicalDevice physicalDeviceHandle;
 };
 } // namespace uppexo
 

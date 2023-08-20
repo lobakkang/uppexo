@@ -37,7 +37,7 @@ int main(void) {
   sampler.create();
 
   auto commandBuffer = uppexoEngine.addCommandBuffer(device);
-  commandBuffer.setBufferNumber(2);
+  commandBuffer.setBufferNumber(1);
   commandBuffer.create();
 
   auto image = uppexoEngine.addImage(device, commandBuffer, buffer);
@@ -48,4 +48,6 @@ int main(void) {
 
   image.getComponent().exportImageToFile(
       "./lol.png", commandBuffer.getComponent(), buffer.getComponent(), 0, 0);
+
+  buffer.getComponent().addBuffer(uppexo::presetBufferCellBlueprint::VBO_at_device(100));
 }
