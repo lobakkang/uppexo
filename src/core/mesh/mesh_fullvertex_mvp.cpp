@@ -4,14 +4,14 @@
 #include <iostream>
 #include <utils/log.hpp>
 
-template <> uppexo::Mesh<uppexo::FullVertex>::Mesh() {
+template <> uppexo::Mesh<uppexo::FullVertex, uppexo::MVP>::Mesh() {
   meshCount = 0;
   indexList.clear();
   vertexList.clear();
 }
 
 template <>
-void uppexo::Mesh<uppexo::FullVertex>::addMesh(uppexo::MeshInfo &info) {
+void uppexo::Mesh<uppexo::FullVertex, uppexo::MVP>::addMesh(uppexo::MeshInfo &info) {
   uppexo::Log::GetInstance().logInfo("Loading mesh from %s\n",
                                      info.path.c_str());
 
@@ -24,6 +24,25 @@ void uppexo::Mesh<uppexo::FullVertex>::addMesh(uppexo::MeshInfo &info) {
                         info.path.c_str())) {
     uppexo::Log::GetInstance().logError("Failed to load OBJ file %s %s\n",
                                         err.c_str(), warn.c_str());
+  }
+
+  for (const auto &material : materials) {
+    Material mat;
+    mat.ambient[0] = material.ambient[0];
+    mat.ambient[1] = material.ambient[1];
+    mat.ambient[2] = material.ambient[2];
+
+    mat.diffuse[0] = material.diffuse[0];
+    mat.diffuse[1] = material.diffuse[1];
+    mat.diffuse[2] = material.diffuse[2];
+
+    mat.specular[0] = material.specular[0];
+    mat.specular[1] = material.specular[1];
+    mat.specular[2] = material.specular[2];
+
+    mat.shininess = material.shininess;
+
+    MaterialList.push_back(mat);
   }
 
   for (const auto &shape : shapes) {
@@ -41,15 +60,11 @@ void uppexo::Mesh<uppexo::FullVertex>::addMesh(uppexo::MeshInfo &info) {
       vertex.uv[0] = attrib.texcoords[index.texcoord_index * 2 + 0];
       vertex.uv[1] = 1.0f - attrib.texcoords[index.texcoord_index * 2 + 1];
 
-      vertex.color[0] =
-          1.0f; // materials[shape.mesh.material_ids[i]].diffuse[0];
-      vertex.color[1] =
-          1.0f; // materials[shape.mesh.material_ids[i]].diffuse[1];
-      vertex.color[2] =
-          1.0f; // materials[shape.mesh.material_ids[i]].diffuse[2];
-      vertex.color[3] =
-          1.0f; // materials[shape.mesh.material_ids[i]].ambient[3];
-                // i++;
+      vertex.color[0] = 1.0f;
+      vertex.color[1] = 1.0f;
+      vertex.color[2] = 1.0f;
+      vertex.color[3] = 1.0f;
+
       if (uniqueVertex.count(vertex) == 0) {
         uniqueVertex[vertex] = static_cast<uint32_t>(vertexList.size());
         vertexList.push_back(vertex);

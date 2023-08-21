@@ -51,6 +51,8 @@ struct GraphicPipelineBlueprint {
     this->descriptorSet = &descriptor;
   }
 
+  template<typename T> void setVertexType();
+
   void addVertexShaderFromFile(std::string path) {
     vertexDirectRead = false;
     VertexShader = path;

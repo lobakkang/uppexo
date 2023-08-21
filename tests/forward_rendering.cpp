@@ -100,7 +100,7 @@ int main(void) {
 
   uppexo::MeshInfo room;
   room.path = "./demo/viking_room.obj";
-  uppexo::Mesh<uppexo::FullVertex> mesh;
+  uppexo::Mesh<uppexo::FullVertex, uppexo::MVP> mesh;
   mesh.addMesh(room);
 
   buffer.getComponent().copyByMapping(0, mesh.getVertexList(),

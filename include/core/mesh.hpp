@@ -15,27 +15,30 @@ struct MeshInfo {
   uint32_t indexEndAddress;
 };
 
-template <typename T> class Mesh {
+template <typename Tvert, typename Tmvp> class Mesh {
 public:
   Mesh();
 
   void addMesh(MeshInfo &info);
 
-  MVP *getMVPList() { return MVPList.data(); }
-  T *getVertexList() { return vertexList.data(); };
+  Tmvp *getMVPList() { return MVPList.data(); }
+  Tvert *getVertexList() { return vertexList.data(); };
   uint32_t *getIndexList() { return indexList.data(); };
+  Material *getMaterialList() { return MaterialList.data(); };
 
   int getVertexCount() { return vertexList.size(); }
   int getIndexCount() { return indexList.size(); }
   int getMVPCount() { return MVPList.size(); }
+  int getMaterialCount() { return MaterialList.size(); }
 
 private:
-  std::unordered_map<T, uint32_t> uniqueVertex;
+  std::unordered_map<Tvert, uint32_t> uniqueVertex;
   int meshCount;
 
   std::vector<uint32_t> indexList;
-  std::vector<T> vertexList;
-  std::vector<MVP> MVPList;
+  std::vector<Tvert> vertexList;
+  std::vector<Tmvp> MVPList;
+  std::vector<Material> MaterialList;
 };
 } // namespace uppexo
 

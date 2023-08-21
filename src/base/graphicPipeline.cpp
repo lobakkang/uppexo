@@ -2,6 +2,18 @@
 #include <utils/log.hpp>
 #include <utils/vulkan_util.hpp>
 
+template <>
+void uppexo::GraphicPipelineBlueprint::setVertexType<uppexo::FullVertex>() {
+  bindingDescription = FullVertex::getBindingDescription();
+  attributeDescription = FullVertex::getAttributeDescriptions();
+};
+
+template <>
+void uppexo::GraphicPipelineBlueprint::setVertexType<uppexo::PhongVertex>() {
+  bindingDescription = PhongVertex::getBindingDescription();
+  attributeDescription = PhongVertex::getAttributeDescriptions();
+};
+
 uppexo::GraphicPipeline::GraphicPipeline(
     uppexo::GraphicPipelineBlueprint pipelineBlueprint) {
   uppexo::Log::GetInstance().logInfo("Creating graphic pipeline\n");

@@ -18,23 +18,30 @@ int main(void) {
   auto buffer = uppexoEngine.addBuffer(device);
   int vertexBuffer =
       buffer.addCell(uppexo::presetBufferCellBlueprint::VBO_at_device(
-          sizeof(uppexo::FullVertex) * 1024 * 1024));
+          sizeof(uppexo::PhongVertex) * 1024 * 1024));
   int indexBuffer = buffer.addCell(
       uppexo::presetBufferCellBlueprint::IBO_at_device(1024 * 1024));
-  int uniformBuffer = buffer.addCell(
-      uppexo::presetBufferCellBlueprint::UBO_at_host(sizeof(uppexo::MVP)));
+  int uniformBuffer =
+      buffer.addCell(uppexo::presetBufferCellBlueprint::UBO_at_host(
+          sizeof(uppexo::MVP_with_normalized_matrix)));
+  int materialBuffer =
+      buffer.addCell(uppexo::presetBufferCellBlueprint::UBO_at_host(
+          sizeof(uppexo::Material) * 10));
   buffer.create();
 
   uppexo::MeshInfo gun;
   gun.path = "./demo/ak-47.obj";
-  uppexo::Mesh<uppexo::FullVertex> mesh;
+  uppexo::Mesh<uppexo::PhongVertex, uppexo::MVP_with_normalized_matrix> mesh;
   mesh.addMesh(gun);
 
   buffer.getComponent().copyByMapping(0, mesh.getVertexList(),
                                       mesh.getVertexCount() *
-                                          sizeof(uppexo::FullVertex));
+                                          sizeof(uppexo::PhongVertex));
   buffer.getComponent().copyByMapping(1, mesh.getIndexList(),
                                       mesh.getIndexCount() * sizeof(uint32_t));
+  buffer.getComponent().copyByMapping(3, mesh.getMaterialList(),
+                                      mesh.getMaterialCount() *
+                                          sizeof(uppexo::Material));
 
   auto renderPass = uppexoEngine.addRenderPass(device);
   auto offscreenAttachment = renderPass.addAttachment(
@@ -51,12 +58,18 @@ int main(void) {
 
   auto descriptorSet = uppexoEngine.addDescriptorSet(device);
   descriptorSet.addBinding(
-      0, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_vertex_shader(
-             buffer, uniformBuffer, sizeof(uppexo::MVP)));
+      0,
+      uppexo::presetDescriptorSetBindingBlueprint::UBO_at_vertex_shader(
+          buffer, uniformBuffer, sizeof(uppexo::MVP_with_normalized_matrix)));
+  descriptorSet.addBinding(
+      0, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_fragment_shader(
+             buffer, materialBuffer,
+             mesh.getMaterialCount() * sizeof(uppexo::Material)));
   descriptorSet.create();
 
   auto graphicPipeline =
       uppexoEngine.addGraphicPipeline(device, renderPass, descriptorSet);
+  graphicPipeline.setVertexType<uppexo::PhongVertex>();
   graphicPipeline.addVertexShaderFromCode((char *)offscreenVertexShader,
                                           offscreenVertexShader_size);
   graphicPipeline.addFragmentShaderFromCode((char *)offscreenFragmentShader,
@@ -103,19 +116,20 @@ int main(void) {
 
   synchronizer.getComponent().waitForFence({frame}, true);
 
-  uppexo::MVP ubo{};
+  uppexo::MVP_with_normalized_matrix ubo{};
   ubo.model = glm::rotate(glm::mat4(1.0f), 1 * glm::radians(90.0f),
-                          glm::vec3(0.0f, 0.0f, 1.0f));
+                          glm::vec3(1.0f, 0.0f, 0.0f));
   ubo.view =
-      glm::lookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f),
+      glm::lookAt(glm::vec3(0.0f, -10.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f),
                   glm::vec3(0.0f, 0.0f, 1.0f));
   ubo.proj = glm::perspective(glm::radians(45.0f), (float)(640.0f / 480.0f),
                               0.1f, 100.0f);
   ubo.proj[1][1] *= -1;
+  ubo.norm_model = (glm::transpose(glm::inverse(ubo.model)));
   mesh.getMVPList()[0] = ubo;
 
-  buffer.getComponent().copyByMapping(2, mesh.getMVPList(),
-                                      mesh.getMVPCount() * sizeof(uppexo::MVP));
+  buffer.getComponent().copyByMapping(
+      2, mesh.getMVPList(), sizeof(uppexo::MVP_with_normalized_matrix));
 
   sequence.record(commandBuffer, frame);
   sequence.execute(commandBuffer, frame, device, graphicQueue, synchronizer, {},
