@@ -70,7 +70,8 @@ uppexo::Uppexo::addSynchronizer(TrackedBlueprint<DeviceBlueprint> &device) {
 }
 
 TrackedBlueprint<uppexo::CommandBufferBlueprint>
-uppexo::Uppexo::addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device, std::tuple<QueueType, int> queue) {
+uppexo::Uppexo::addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device,
+                                 std::tuple<QueueType, int> queue) {
   TrackedBlueprint<uppexo::CommandBufferBlueprint> blueprint(
       getComponent<Device>(device.componentID), std::get<0>(queue));
   blueprint.create = [this, &blueprint]() {
@@ -190,6 +191,22 @@ TrackedBlueprint<uppexo::DeviceBlueprint> uppexo::Uppexo::addDevice() {
   };
   blueprint.getComponent = [this, &blueprint]() -> Device & {
     return this->getComponent<Device>(blueprint.componentID);
+  };
+  return blueprint;
+}
+
+TrackedBlueprint<uppexo::GuiBlueprint> uppexo::Uppexo::addGui(
+    TrackedBlueprint<DeviceBlueprint> &device,
+    TrackedBlueprint<CommandBufferBlueprint> &commandBuffer) {
+  TrackedBlueprint<uppexo::GuiBlueprint> blueprint(
+      getComponent<Instance>(0), getComponent<Device>(device.componentID),
+      getComponent<CommandBuffer>(commandBuffer.componentID));
+  blueprint.create = [this, &blueprint]() {
+    blueprint.componentID = this->componentList.size();
+    this->addComponent<Gui>(blueprint);
+  };
+  blueprint.getComponent = [this, &blueprint]() -> Gui & {
+    return this->getComponent<Gui>(blueprint.componentID);
   };
   return blueprint;
 }

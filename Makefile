@@ -598,6 +598,30 @@ src/core/datatype.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/datatype.cpp.s
 .PHONY : src/core/datatype.cpp.s
 
+src/core/gui.o: src/core/gui.cpp.o
+.PHONY : src/core/gui.o
+
+# target to build an object file
+src/core/gui.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/gui.cpp.o
+.PHONY : src/core/gui.cpp.o
+
+src/core/gui.i: src/core/gui.cpp.i
+.PHONY : src/core/gui.i
+
+# target to preprocess a source file
+src/core/gui.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/gui.cpp.i
+.PHONY : src/core/gui.cpp.i
+
+src/core/gui.s: src/core/gui.cpp.s
+.PHONY : src/core/gui.s
+
+# target to generate assembly for a file
+src/core/gui.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/src/core/gui.cpp.s
+.PHONY : src/core/gui.cpp.s
+
 src/core/mesh.o: src/core/mesh.cpp.o
 .PHONY : src/core/mesh.o
 
@@ -862,6 +886,150 @@ tests/offscreen_rendering.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/offscreen_rendering.dir/build.make CMakeFiles/offscreen_rendering.dir/tests/offscreen_rendering.cpp.s
 .PHONY : tests/offscreen_rendering.cpp.s
 
+third_party/imgui/backends/imgui_impl_glfw.o: third_party/imgui/backends/imgui_impl_glfw.cpp.o
+.PHONY : third_party/imgui/backends/imgui_impl_glfw.o
+
+# target to build an object file
+third_party/imgui/backends/imgui_impl_glfw.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.o
+.PHONY : third_party/imgui/backends/imgui_impl_glfw.cpp.o
+
+third_party/imgui/backends/imgui_impl_glfw.i: third_party/imgui/backends/imgui_impl_glfw.cpp.i
+.PHONY : third_party/imgui/backends/imgui_impl_glfw.i
+
+# target to preprocess a source file
+third_party/imgui/backends/imgui_impl_glfw.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.i
+.PHONY : third_party/imgui/backends/imgui_impl_glfw.cpp.i
+
+third_party/imgui/backends/imgui_impl_glfw.s: third_party/imgui/backends/imgui_impl_glfw.cpp.s
+.PHONY : third_party/imgui/backends/imgui_impl_glfw.s
+
+# target to generate assembly for a file
+third_party/imgui/backends/imgui_impl_glfw.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.s
+.PHONY : third_party/imgui/backends/imgui_impl_glfw.cpp.s
+
+third_party/imgui/backends/imgui_impl_vulkan.o: third_party/imgui/backends/imgui_impl_vulkan.cpp.o
+.PHONY : third_party/imgui/backends/imgui_impl_vulkan.o
+
+# target to build an object file
+third_party/imgui/backends/imgui_impl_vulkan.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_vulkan.cpp.o
+.PHONY : third_party/imgui/backends/imgui_impl_vulkan.cpp.o
+
+third_party/imgui/backends/imgui_impl_vulkan.i: third_party/imgui/backends/imgui_impl_vulkan.cpp.i
+.PHONY : third_party/imgui/backends/imgui_impl_vulkan.i
+
+# target to preprocess a source file
+third_party/imgui/backends/imgui_impl_vulkan.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_vulkan.cpp.i
+.PHONY : third_party/imgui/backends/imgui_impl_vulkan.cpp.i
+
+third_party/imgui/backends/imgui_impl_vulkan.s: third_party/imgui/backends/imgui_impl_vulkan.cpp.s
+.PHONY : third_party/imgui/backends/imgui_impl_vulkan.s
+
+# target to generate assembly for a file
+third_party/imgui/backends/imgui_impl_vulkan.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_vulkan.cpp.s
+.PHONY : third_party/imgui/backends/imgui_impl_vulkan.cpp.s
+
+third_party/imgui/imgui.o: third_party/imgui/imgui.cpp.o
+.PHONY : third_party/imgui/imgui.o
+
+# target to build an object file
+third_party/imgui/imgui.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui.cpp.o
+.PHONY : third_party/imgui/imgui.cpp.o
+
+third_party/imgui/imgui.i: third_party/imgui/imgui.cpp.i
+.PHONY : third_party/imgui/imgui.i
+
+# target to preprocess a source file
+third_party/imgui/imgui.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui.cpp.i
+.PHONY : third_party/imgui/imgui.cpp.i
+
+third_party/imgui/imgui.s: third_party/imgui/imgui.cpp.s
+.PHONY : third_party/imgui/imgui.s
+
+# target to generate assembly for a file
+third_party/imgui/imgui.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui.cpp.s
+.PHONY : third_party/imgui/imgui.cpp.s
+
+third_party/imgui/imgui_draw.o: third_party/imgui/imgui_draw.cpp.o
+.PHONY : third_party/imgui/imgui_draw.o
+
+# target to build an object file
+third_party/imgui/imgui_draw.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_draw.cpp.o
+.PHONY : third_party/imgui/imgui_draw.cpp.o
+
+third_party/imgui/imgui_draw.i: third_party/imgui/imgui_draw.cpp.i
+.PHONY : third_party/imgui/imgui_draw.i
+
+# target to preprocess a source file
+third_party/imgui/imgui_draw.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_draw.cpp.i
+.PHONY : third_party/imgui/imgui_draw.cpp.i
+
+third_party/imgui/imgui_draw.s: third_party/imgui/imgui_draw.cpp.s
+.PHONY : third_party/imgui/imgui_draw.s
+
+# target to generate assembly for a file
+third_party/imgui/imgui_draw.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_draw.cpp.s
+.PHONY : third_party/imgui/imgui_draw.cpp.s
+
+third_party/imgui/imgui_tables.o: third_party/imgui/imgui_tables.cpp.o
+.PHONY : third_party/imgui/imgui_tables.o
+
+# target to build an object file
+third_party/imgui/imgui_tables.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_tables.cpp.o
+.PHONY : third_party/imgui/imgui_tables.cpp.o
+
+third_party/imgui/imgui_tables.i: third_party/imgui/imgui_tables.cpp.i
+.PHONY : third_party/imgui/imgui_tables.i
+
+# target to preprocess a source file
+third_party/imgui/imgui_tables.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_tables.cpp.i
+.PHONY : third_party/imgui/imgui_tables.cpp.i
+
+third_party/imgui/imgui_tables.s: third_party/imgui/imgui_tables.cpp.s
+.PHONY : third_party/imgui/imgui_tables.s
+
+# target to generate assembly for a file
+third_party/imgui/imgui_tables.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_tables.cpp.s
+.PHONY : third_party/imgui/imgui_tables.cpp.s
+
+third_party/imgui/imgui_widgets.o: third_party/imgui/imgui_widgets.cpp.o
+.PHONY : third_party/imgui/imgui_widgets.o
+
+# target to build an object file
+third_party/imgui/imgui_widgets.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_widgets.cpp.o
+.PHONY : third_party/imgui/imgui_widgets.cpp.o
+
+third_party/imgui/imgui_widgets.i: third_party/imgui/imgui_widgets.cpp.i
+.PHONY : third_party/imgui/imgui_widgets.i
+
+# target to preprocess a source file
+third_party/imgui/imgui_widgets.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_widgets.cpp.i
+.PHONY : third_party/imgui/imgui_widgets.cpp.i
+
+third_party/imgui/imgui_widgets.s: third_party/imgui/imgui_widgets.cpp.s
+.PHONY : third_party/imgui/imgui_widgets.s
+
+# target to generate assembly for a file
+third_party/imgui/imgui_widgets.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uppexo.dir/build.make CMakeFiles/uppexo.dir/third_party/imgui/imgui_widgets.cpp.s
+.PHONY : third_party/imgui/imgui_widgets.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -924,6 +1092,9 @@ help:
 	@echo "... src/core/datatype.o"
 	@echo "... src/core/datatype.i"
 	@echo "... src/core/datatype.s"
+	@echo "... src/core/gui.o"
+	@echo "... src/core/gui.i"
+	@echo "... src/core/gui.s"
 	@echo "... src/core/mesh.o"
 	@echo "... src/core/mesh.i"
 	@echo "... src/core/mesh.s"
@@ -957,6 +1128,24 @@ help:
 	@echo "... tests/offscreen_rendering.o"
 	@echo "... tests/offscreen_rendering.i"
 	@echo "... tests/offscreen_rendering.s"
+	@echo "... third_party/imgui/backends/imgui_impl_glfw.o"
+	@echo "... third_party/imgui/backends/imgui_impl_glfw.i"
+	@echo "... third_party/imgui/backends/imgui_impl_glfw.s"
+	@echo "... third_party/imgui/backends/imgui_impl_vulkan.o"
+	@echo "... third_party/imgui/backends/imgui_impl_vulkan.i"
+	@echo "... third_party/imgui/backends/imgui_impl_vulkan.s"
+	@echo "... third_party/imgui/imgui.o"
+	@echo "... third_party/imgui/imgui.i"
+	@echo "... third_party/imgui/imgui.s"
+	@echo "... third_party/imgui/imgui_draw.o"
+	@echo "... third_party/imgui/imgui_draw.i"
+	@echo "... third_party/imgui/imgui_draw.s"
+	@echo "... third_party/imgui/imgui_tables.o"
+	@echo "... third_party/imgui/imgui_tables.i"
+	@echo "... third_party/imgui/imgui_tables.s"
+	@echo "... third_party/imgui/imgui_widgets.o"
+	@echo "... third_party/imgui/imgui_widgets.i"
+	@echo "... third_party/imgui/imgui_widgets.s"
 .PHONY : help
 
 

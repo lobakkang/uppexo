@@ -2,12 +2,12 @@
 #define ENGINE_HPP_
 
 #include <any>
-#include <core/present.hpp>
+#include <base/computePipeline.hpp>
 #include <base/descriptor.hpp>
 #include <base/framebuffer.hpp>
 #include <base/graphicPipeline.hpp>
-#include <base/computePipeline.hpp>
 #include <component.hpp>
+#include <core/present.hpp>
 #include <memory>
 #include <tuple>
 #include <vector>
@@ -29,7 +29,8 @@ public:
   TrackedBlueprint<SamplerBlueprint>
   addSampler(TrackedBlueprint<DeviceBlueprint> &device);
   TrackedBlueprint<CommandBufferBlueprint>
-  addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device, std::tuple<QueueType, int> queue = {QueueType::graphic, 0});
+  addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device,
+                   std::tuple<QueueType, int> queue = {QueueType::graphic, 0});
   TrackedBlueprint<RenderpassBlueprint>
   addRenderPass(TrackedBlueprint<DeviceBlueprint> &device);
   TrackedBlueprint<ImageBlueprint>
@@ -50,6 +51,9 @@ public:
                      TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet);
   TrackedBlueprint<SynchronizerBlueprint>
   addSynchronizer(TrackedBlueprint<DeviceBlueprint> &device);
+  TrackedBlueprint<GuiBlueprint>
+  addGui(TrackedBlueprint<DeviceBlueprint> &device,
+         TrackedBlueprint<CommandBufferBlueprint> &commandBuffer);
 
   Sequence &addSequence();
   bool isRunning();

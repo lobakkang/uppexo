@@ -488,4 +488,11 @@ CMakeFiles/forward_rendering.dir/tests/forward_rendering.cpp.o
  /home/lobakkang/active_github/uppexo/include/core/command/general.hpp
  /home/lobakkang/active_github/uppexo/include/core/command/compute.hpp
  /home/lobakkang/active_github/uppexo/include/core/command/render.hpp
+ /home/lobakkang/active_github/uppexo/include/core/gui.hpp
+ /home/lobakkang/active_github/uppexo/third_party/imgui/backends/imgui_impl_glfw.h
+ /home/lobakkang/active_github/uppexo/third_party/imgui/imgui.h
+ /home/lobakkang/active_github/uppexo/third_party/imgui/imconfig.h
+ /usr/include/string.h
+ /usr/include/strings.h
+ /home/lobakkang/active_github/uppexo/third_party/imgui/backends/imgui_impl_vulkan.h
 

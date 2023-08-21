@@ -22,6 +22,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/lobakkang/active_github/uppexo/src/base/shader.cpp" "CMakeFiles/uppexo.dir/src/base/shader.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/base/shader.cpp.o.d"
   "/home/lobakkang/active_github/uppexo/src/base/synchronizer.cpp" "CMakeFiles/uppexo.dir/src/base/synchronizer.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/base/synchronizer.cpp.o.d"
   "/home/lobakkang/active_github/uppexo/src/core/datatype.cpp" "CMakeFiles/uppexo.dir/src/core/datatype.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/core/datatype.cpp.o.d"
+  "/home/lobakkang/active_github/uppexo/src/core/gui.cpp" "CMakeFiles/uppexo.dir/src/core/gui.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/core/gui.cpp.o.d"
   "/home/lobakkang/active_github/uppexo/src/core/mesh.cpp" "CMakeFiles/uppexo.dir/src/core/mesh.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/core/mesh.cpp.o.d"
   "/home/lobakkang/active_github/uppexo/src/core/present.cpp" "CMakeFiles/uppexo.dir/src/core/present.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/core/present.cpp.o.d"
   "/home/lobakkang/active_github/uppexo/src/core/sequence.cpp" "CMakeFiles/uppexo.dir/src/core/sequence.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/core/sequence.cpp.o.d"
@@ -30,6 +31,12 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/lobakkang/active_github/uppexo/src/utils/device_util.cpp" "CMakeFiles/uppexo.dir/src/utils/device_util.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/utils/device_util.cpp.o.d"
   "/home/lobakkang/active_github/uppexo/src/utils/log.cpp" "CMakeFiles/uppexo.dir/src/utils/log.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/utils/log.cpp.o.d"
   "/home/lobakkang/active_github/uppexo/src/utils/vulkan_util.cpp" "CMakeFiles/uppexo.dir/src/utils/vulkan_util.cpp.o" "gcc" "CMakeFiles/uppexo.dir/src/utils/vulkan_util.cpp.o.d"
+  "/home/lobakkang/active_github/uppexo/third_party/imgui/backends/imgui_impl_glfw.cpp" "CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.o" "gcc" "CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_glfw.cpp.o.d"
+  "/home/lobakkang/active_github/uppexo/third_party/imgui/backends/imgui_impl_vulkan.cpp" "CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_vulkan.cpp.o" "gcc" "CMakeFiles/uppexo.dir/third_party/imgui/backends/imgui_impl_vulkan.cpp.o.d"
+  "/home/lobakkang/active_github/uppexo/third_party/imgui/imgui.cpp" "CMakeFiles/uppexo.dir/third_party/imgui/imgui.cpp.o" "gcc" "CMakeFiles/uppexo.dir/third_party/imgui/imgui.cpp.o.d"
+  "/home/lobakkang/active_github/uppexo/third_party/imgui/imgui_draw.cpp" "CMakeFiles/uppexo.dir/third_party/imgui/imgui_draw.cpp.o" "gcc" "CMakeFiles/uppexo.dir/third_party/imgui/imgui_draw.cpp.o.d"
+  "/home/lobakkang/active_github/uppexo/third_party/imgui/imgui_tables.cpp" "CMakeFiles/uppexo.dir/third_party/imgui/imgui_tables.cpp.o" "gcc" "CMakeFiles/uppexo.dir/third_party/imgui/imgui_tables.cpp.o.d"
+  "/home/lobakkang/active_github/uppexo/third_party/imgui/imgui_widgets.cpp" "CMakeFiles/uppexo.dir/third_party/imgui/imgui_widgets.cpp.o" "gcc" "CMakeFiles/uppexo.dir/third_party/imgui/imgui_widgets.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

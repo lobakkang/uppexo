@@ -89,3 +89,5 @@ template int uppexo::Sequence::add<uppexo::command::IndexedDraw>(
     uppexo::command::IndexedDraw cmd);
 template int uppexo::Sequence::add<uppexo::command::DispatchCompute>(
     uppexo::command::DispatchCompute cmd);
+template int uppexo::Sequence::add<uppexo::command::RenderGUI>(
+    uppexo::command::RenderGUI cmd);

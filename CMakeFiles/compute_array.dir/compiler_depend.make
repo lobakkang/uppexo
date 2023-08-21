@@ -508,8 +508,17 @@ CMakeFiles/compute_array.dir/tests/compute_array.cpp.o: tests/compute_array.cpp 
   include/core/sequence.hpp \
   include/core/command/general.hpp \
   include/core/command/compute.hpp \
-  include/core/command/render.hpp
+  include/core/command/render.hpp \
+  include/core/gui.hpp \
+  third_party/imgui/backends/imgui_impl_glfw.h \
+  third_party/imgui/imgui.h \
+  third_party/imgui/imconfig.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  third_party/imgui/backends/imgui_impl_vulkan.h
 
+
+/usr/include/string.h:
 
 include/core/command/compute.hpp:
 
@@ -722,6 +731,8 @@ include/base/computePipeline.hpp:
 /usr/include/glm/matrix.hpp:
 
 /usr/include/glm/ext/vector_bool3.hpp:
+
+third_party/imgui/imgui.h:
 
 /usr/include/glm/vec3.hpp:
 
@@ -1061,11 +1072,15 @@ include/base/shader.hpp:
 
 /usr/include/bits/floatn-common.h:
 
+third_party/imgui/backends/imgui_impl_glfw.h:
+
 /usr/lib/gcc/x86_64-pc-linux-gnu/13.1.1/include/stdint.h:
 
 /usr/include/glm/ext/vector_float1.hpp:
 
 /usr/include/bits/wctype-wchar.h:
+
+third_party/imgui/backends/imgui_impl_vulkan.h:
 
 /usr/include/bits/types/mbstate_t.h:
 
@@ -1140,6 +1155,8 @@ include/core/datatype.hpp:
 /usr/include/c++/13.1.1/cstddef:
 
 /usr/include/GLFW/glfw3.h:
+
+third_party/imgui/imconfig.h:
 
 include/base/commandbuffer.hpp:
 
@@ -1232,6 +1249,8 @@ include/generated/computeShader.h:
 /usr/include/c++/13.1.1/bits/basic_ios.tcc:
 
 /usr/include/bits/endian.h:
+
+include/core/gui.hpp:
 
 /usr/include/c++/13.1.1/new:
 
@@ -1352,6 +1371,8 @@ include/component.hpp:
 /usr/include/c++/13.1.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
 
 /usr/include/c++/13.1.1/bits/charconv.h:
+
+/usr/include/strings.h:
 
 /usr/include/glm/detail/compute_common.hpp:
 

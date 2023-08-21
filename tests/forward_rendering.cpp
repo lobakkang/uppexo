@@ -4,6 +4,8 @@
 #include <thread>
 #include <uppexo.hpp>
 
+#include <core/gui.hpp>
+
 #define IMAGE_AVAILABLE_SEMAPHORE 2
 #define RENDER_FINISH_SEMAPHORE 0
 
@@ -54,6 +56,9 @@ int main(void) {
   auto frameBuffer = uppexoEngine.addFrameBuffer(device, renderPass);
   frameBuffer.addImageView(image, 1, 0);
   frameBuffer.create();
+
+  auto gui = uppexoEngine.addGui(device, commandBuffer);
+  gui.create();
 
   auto descriptorSet = uppexoEngine.addDescriptorSet(device);
   descriptorSet.addBinding(
@@ -112,10 +117,11 @@ int main(void) {
   sequence.add(uppexo::command::BindVertexBuffer(buffer, vertexBuffer));
   sequence.add(uppexo::command::SetViewport(device));
   sequence.add(uppexo::command::SetScissor(device));
-  sequence.add(uppexo::command::BindGraphicDescriptorSet(descriptorSet,
-                                                  graphicPipeline, frame));
+  sequence.add(uppexo::command::BindGraphicDescriptorSet(
+      descriptorSet, graphicPipeline, frame));
   sequence.add(
       uppexo::command::IndexedDraw(buffer, indexBuffer, mesh.getIndexCount()));
+  sequence.add(uppexo::command::RenderGUI());
   sequence.add(uppexo::command::EndRenderPass());
   sequence.add(uppexo::command::EndRecorder());
 
@@ -135,9 +141,12 @@ int main(void) {
       std::this_thread::sleep_for(
           std::chrono::milliseconds(MIN_FRAME_TIME - elapsed));
     }
+
+    gui.getComponent().render();
+
     synchronizer.getComponent().waitForFence({frame}, true);
     imageIndex = uppexo::Present::getImage(device, synchronizer,
-                                            IMAGE_AVAILABLE_SEMAPHORE + frame);
+                                           IMAGE_AVAILABLE_SEMAPHORE + frame);
 
     static auto initTime = std::chrono::high_resolution_clock::now();
     auto currentTime = std::chrono::high_resolution_clock::now();
@@ -164,7 +173,8 @@ int main(void) {
 
     sequence.record(commandBuffer, frame);
     sequence.execute(commandBuffer, frame, device, graphicQueue, synchronizer,
-                     {{IMAGE_AVAILABLE_SEMAPHORE + frame, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}},
+                     {{IMAGE_AVAILABLE_SEMAPHORE + frame,
+                       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}},
                      {RENDER_FINISH_SEMAPHORE + frame}, frame);
 
     uppexo::Present::presentImage(device, synchronizer,

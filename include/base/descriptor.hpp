@@ -136,6 +136,7 @@ public:
   void update();
   std::vector<VkDescriptorSetLayout> &getLayout();
   std::vector<VkDescriptorSet> &getSet();
+  VkDescriptorPool getPool() { return descriptorPool; }
 
 private:
   VkDevice device;

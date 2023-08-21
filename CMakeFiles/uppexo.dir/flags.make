@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -Duppexo_EXPORTS
 
-CXX_INCLUDES = -I/home/lobakkang/active_github/uppexo/include -I/home/lobakkang/active_github/uppexo/third_party
+CXX_INCLUDES = -I/home/lobakkang/active_github/uppexo/include -I/home/lobakkang/active_github/uppexo/third_party -I/home/lobakkang/active_github/uppexo/third_party/imgui
 
 CXX_FLAGS = -g -std=gnu++17 -fPIC
 

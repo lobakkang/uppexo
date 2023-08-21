@@ -15,6 +15,8 @@
 #include <base/framebuffer.hpp>
 #include <base/graphicPipeline.hpp>
 
+#include <core/gui.hpp>
+
 namespace uppexo {
 namespace command {
 class BeginRenderPass : public Command {
@@ -27,6 +29,34 @@ public:
     this->frameBuffer = &framebuffer.getComponent();
     this->extend = device.getComponent().getSwapChainExtend();
     this->framebufferID = &framebufferID;
+
+    this->clearColour = {{0.0f, 0.0f, 0.0f, 1.0f}};
+  }
+
+  BeginRenderPass(TrackedBlueprint<RenderpassBlueprint> &renderPass,
+                  TrackedBlueprint<FramebufferBlueprint> &framebuffer,
+                  TrackedBlueprint<DeviceBlueprint> &device, int &framebufferID,
+                  VkClearColorValue clearColour)
+      : Command() {
+    this->renderpass = renderPass.getComponent().getRenderPass();
+    this->frameBuffer = &framebuffer.getComponent();
+    this->extend = device.getComponent().getSwapChainExtend();
+    this->framebufferID = &framebufferID;
+
+    this->clearColour = clearColour;
+  }
+
+  BeginRenderPass(TrackedBlueprint<RenderpassBlueprint> &renderPass,
+                  TrackedBlueprint<FramebufferBlueprint> &framebuffer,
+                  TrackedBlueprint<DeviceBlueprint> &device, int &framebufferID,
+                  VkClearColorValue &clearColour)
+      : Command() {
+    this->renderpass = renderPass.getComponent().getRenderPass();
+    this->frameBuffer = &framebuffer.getComponent();
+    this->extend = device.getComponent().getSwapChainExtend();
+    this->framebufferID = &framebufferID;
+
+    this->clearColour = clearColour;
   }
 
   BeginRenderPass(TrackedBlueprint<RenderpassBlueprint> &renderPass,
@@ -37,6 +67,8 @@ public:
     this->frameBuffer = &framebuffer.getComponent();
     this->extend = extend;
     this->framebufferID = &framebufferID;
+
+    this->clearColour = {{0.0f, 0.0f, 0.0f, 1.0f}};
   }
 
   void execute(VkCommandBuffer commandbuffer) override {
@@ -48,7 +80,7 @@ public:
     renderPassInfo.renderArea.extent = extend;
 
     std::array<VkClearValue, 2> clearValues{};
-    clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+    clearValues[0].color = clearColour;
     clearValues[1].depthStencil = {1.0f, 0};
     renderPassInfo.clearValueCount = 2;
     renderPassInfo.pClearValues = clearValues.data();
@@ -60,8 +92,10 @@ public:
 private:
   VkRenderPass renderpass;
   VkExtent2D extend;
+
   Framebuffer *frameBuffer;
   int *framebufferID;
+  VkClearColorValue clearColour;
 };
 
 class EndRenderPass : public Command {
@@ -145,9 +179,9 @@ private:
 
 class BindGraphicDescriptorSet : public Command {
 public:
-  BindGraphicDescriptorSet(TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet,
-                    TrackedBlueprint<GraphicPipelineBlueprint> &graphicPipeline,
-                    int &setID)
+  BindGraphicDescriptorSet(
+      TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet,
+      TrackedBlueprint<GraphicPipelineBlueprint> &graphicPipeline, int &setID)
       : Command() {
     this->descriptorSet = &descriptorSet.getComponent();
     this->setID = &setID;
@@ -183,6 +217,19 @@ public:
 private:
   int vertexCount;
   VkBuffer indexBuffer;
+};
+
+class RenderGUI : public Command {
+public:
+  // RenderGUI(Gui &gui) : Command() {}
+  RenderGUI() : Command() {}
+
+  void execute(VkCommandBuffer commandbuffer) override {
+    ImDrawData *draw_data = ImGui::GetDrawData();
+    ImGui_ImplVulkan_RenderDrawData(draw_data, commandbuffer);
+  }
+
+private:
 };
 
 } // namespace command
