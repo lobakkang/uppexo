@@ -9,7 +9,7 @@
 #include <GLFW/glfw3.h>
 
 namespace uppexo {
-enum AttachmentPurpose { SWAPCHAIN_COLOUR, DEPTH, UNKNOWN };
+enum AttachmentPurpose { SWAPCHAIN_COLOUR, DEPTH, OFFSCREEN_COLOUR, UNKNOWN };
 
 struct AttachmentBlueprint {
   VkFormat imageFormat;
@@ -37,6 +37,20 @@ struct SwapchainAttachment : AttachmentBlueprint {
     final = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
     optimize = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
     purpose = AttachmentPurpose::SWAPCHAIN_COLOUR;
+  };
+};
+
+struct OffscreenAttachment : AttachmentBlueprint {
+  OffscreenAttachment(VkFormat format) {
+    imageFormat = format;
+    imageLoad = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    imageStore = VK_ATTACHMENT_STORE_OP_STORE;
+    stencilLoad = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    stencilStore = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    initial = VK_IMAGE_LAYOUT_UNDEFINED;
+    final = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+    optimize = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    purpose = AttachmentPurpose::OFFSCREEN_COLOUR;
   };
 };
 

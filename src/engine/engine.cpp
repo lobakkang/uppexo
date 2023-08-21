@@ -132,10 +132,10 @@ uppexo::Uppexo::addDescriptorSet(TrackedBlueprint<DeviceBlueprint> &device) {
 
 TrackedBlueprint<uppexo::FramebufferBlueprint> uppexo::Uppexo::addFrameBuffer(
     TrackedBlueprint<DeviceBlueprint> &device,
-    TrackedBlueprint<RenderpassBlueprint> &renderPass) {
+    TrackedBlueprint<RenderpassBlueprint> &renderPass, VkExtent2D extend) {
   TrackedBlueprint<uppexo::FramebufferBlueprint> blueprint(
       getComponent<Device>(device.componentID),
-      getComponent<Renderpass>(renderPass.componentID));
+      getComponent<Renderpass>(renderPass.componentID), extend);
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
     this->addComponent<Framebuffer>(blueprint);

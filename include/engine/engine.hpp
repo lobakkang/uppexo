@@ -39,7 +39,7 @@ public:
            TrackedBlueprint<BufferBlueprint> &buffer);
   TrackedBlueprint<FramebufferBlueprint>
   addFrameBuffer(TrackedBlueprint<DeviceBlueprint> &device,
-                 TrackedBlueprint<RenderpassBlueprint> &renderPass);
+                 TrackedBlueprint<RenderpassBlueprint> &renderPass, VkExtent2D size = {0, 0});
   TrackedBlueprint<DescriptorSetBlueprint>
   addDescriptorSet(TrackedBlueprint<DeviceBlueprint> &device);
   TrackedBlueprint<GraphicPipelineBlueprint>

@@ -48,6 +48,7 @@ Testing
 CTestTestfile.cmake
 forward_rendering
 compute_array
+offscreen_rendering
 
 CMakeFiles/*
 Makefile
