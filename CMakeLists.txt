@@ -24,7 +24,7 @@ include_directories(${library_INCLUDE_DIRS} include/ third_party/ third_party/im
 
 file(GLOB_RECURSE srcs src/*.cpp ./third_party/imgui/imgui.cpp ./third_party/imgui/backends/imgui_impl_vulkan.cpp ./third_party/imgui/backends/imgui_impl_glfw.cpp ./third_party/imgui/imgui_tables.cpp ./third_party/imgui/imgui_draw.cpp ./third_party/imgui/imgui_widgets.cpp)
 file(GLOB tests tests/*.cpp)
-file(GLOB_RECURSE GLSL_SOURCE_FILES demo/shader/*.frag demo/shader/*.vert demo/shader/*.comp)
+file(GLOB_RECURSE GLSL_SOURCE_FILES shaders/*.frag shaders/*.vert shaders/*.comp)
 
 foreach(GLSL ${GLSL_SOURCE_FILES})
   get_filename_component(FILE_NAME ${GLSL} NAME_WE)

@@ -1,1 +1,0 @@
-/usr/bin/c++ -g -rdynamic CMakeFiles/dev.dir/tests/dev.cpp.o -o dev  -Wl,-rpath,/home/lobakkang/active_github/uppexo /lib/libvulkan.so /usr/lib/libglfw.so.3.3 libuppexo.so third_party/obj/libtinyobjloader.a 

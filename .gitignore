@@ -39,6 +39,7 @@ renderdoc.cap
 
 install_manifest.txt
 *.vim
+*.spv
 Testing
 
 .cache
