@@ -7,10 +7,9 @@ uppexo::Sequence::Sequence() {
   uppexo::Log::GetInstance().logInfo("Creating sequence\n");
 }
 
-void uppexo::Sequence::record(
-    TrackedBlueprint<CommandBufferBlueprint> &commandBuffer, int id) {
+void uppexo::Sequence::record(CommandBuffer &commandBuffer, int id) {
   for (std::shared_ptr<command::Command> seq : sequence) {
-    seq->execute(commandBuffer.getComponent().getBuffer(id));
+    seq->execute(commandBuffer.getBuffer(id));
   }
 }
 

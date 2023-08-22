@@ -13,7 +13,10 @@ namespace uppexo {
 class Sequence {
 public:
   Sequence();
-  void record(TrackedBlueprint<CommandBufferBlueprint> &commandBuffer, int id);
+  void record(CommandBuffer &commandBuffer, int id);
+  void record(TrackedBlueprint<CommandBufferBlueprint> &commandBuffer, int id) {
+    record(commandBuffer.getComponent(), id);
+  }
   void
   execute(CommandBuffer &commandBuffer, int commandBufferID, Device &device,
           std::tuple<QueueType, int> queue, Synchronizer &synchronizer,
