@@ -166,23 +166,27 @@ private:
 class BindVertexBuffer : public Command {
 public:
   BindVertexBuffer(TrackedBlueprint<BufferBlueprint> &vertexBuffer,
-                   int bufferID)
+                   int bufferID, int offset = 0)
       : Command() {
     buffer = vertexBuffer.getComponent().getBuffer(bufferID);
+    this->offset = offset;
   }
 
-  BindVertexBuffer(Buffer &vertexBuffer, int bufferID) : Command() {
+  BindVertexBuffer(Buffer &vertexBuffer, int bufferID, int offset = 0)
+      : Command() {
     buffer = vertexBuffer.getBuffer(bufferID);
+    this->offset = offset;
   }
 
   void execute(VkCommandBuffer commandbuffer) override {
     VkBuffer vertexBuffers[] = {buffer};
-    VkDeviceSize offsets[] = {0};
+    VkDeviceSize offsets[] = {(VkDeviceSize)offset};
     vkCmdBindVertexBuffers(commandbuffer, 0, 1, vertexBuffers, offsets);
   }
 
 private:
   VkBuffer buffer;
+  int offset;
 };
 
 class BindGraphicDescriptorSet : public Command {
@@ -238,6 +242,18 @@ public:
 private:
   int vertexCount;
   VkBuffer indexBuffer;
+};
+
+class NormalDraw : public Command {
+public:
+  NormalDraw(int vertexCount) : Command() { this->vertexCount = vertexCount; }
+
+  void execute(VkCommandBuffer commandbuffer) override {
+    vkCmdDraw(commandbuffer, vertexCount, 1, 0, 0);
+  }
+
+private:
+  int vertexCount;
 };
 
 class RenderGUI : public Command {

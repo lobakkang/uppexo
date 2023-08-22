@@ -78,6 +78,8 @@ template int uppexo::Sequence::add<uppexo::command::SetViewport>(
     uppexo::command::SetViewport cmd);
 template int uppexo::Sequence::add<uppexo::command::IndexedDraw>(
     uppexo::command::IndexedDraw cmd);
+template int uppexo::Sequence::add<uppexo::command::NormalDraw>(
+    uppexo::command::NormalDraw cmd);
 template int uppexo::Sequence::add<uppexo::command::DispatchCompute>(
     uppexo::command::DispatchCompute cmd);
 template int uppexo::Sequence::add<uppexo::command::RenderGUI>(
