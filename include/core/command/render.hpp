@@ -113,6 +113,10 @@ public:
     pipeline = graphicPipeline.getComponent().getPipeline();
   }
 
+  BindGraphicPipeline(GraphicPipeline &graphicPipeline) : Command() {
+    pipeline = graphicPipeline.getPipeline();
+  }
+
   void execute(VkCommandBuffer commandbuffer) override {
     vkCmdBindPipeline(commandbuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
   }
@@ -167,6 +171,10 @@ public:
     buffer = vertexBuffer.getComponent().getBuffer(bufferID);
   }
 
+  BindVertexBuffer(Buffer &vertexBuffer, int bufferID) : Command() {
+    buffer = vertexBuffer.getBuffer(bufferID);
+  }
+
   void execute(VkCommandBuffer commandbuffer) override {
     VkBuffer vertexBuffers[] = {buffer};
     VkDeviceSize offsets[] = {0};
@@ -188,6 +196,14 @@ public:
     this->layout = graphicPipeline.getComponent().getLayout();
   }
 
+  BindGraphicDescriptorSet(DescriptorSet &descriptorSet,
+                           GraphicPipeline &graphicPipeline, int &setID)
+      : Command() {
+    this->descriptorSet = &descriptorSet;
+    this->setID = &setID;
+    this->layout = graphicPipeline.getLayout();
+  }
+
   void execute(VkCommandBuffer commandbuffer) override {
     vkCmdBindDescriptorSets(commandbuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
                             layout, 0, 1, &descriptorSet->getSet()[*setID], 0,
@@ -207,6 +223,11 @@ public:
       : Command() {
     this->vertexCount = vertexCount;
     indexBuffer = buffer.getComponent().getBuffer(indexBufferID);
+  }
+
+  IndexedDraw(Buffer &buffer, int indexBufferID, int vertexCount) : Command() {
+    this->vertexCount = vertexCount;
+    indexBuffer = buffer.getBuffer(indexBufferID);
   }
 
   void execute(VkCommandBuffer commandbuffer) override {
