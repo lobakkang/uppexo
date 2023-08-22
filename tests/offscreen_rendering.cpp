@@ -11,6 +11,8 @@
 int main(void) {
   uppexo::Uppexo uppexoEngine({0, 0}, "offscreen rendering demo", true);
 
+  uppexo::Log::GetInstance().setLevel(uppexo::LOG_LEVEL_INFO);
+
   auto device = uppexoEngine.addDevice();
   auto graphicQueue = device.addQueue(uppexo::graphic);
   device.create();
