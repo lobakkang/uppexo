@@ -11,7 +11,7 @@
 int main(void) {
   uppexo::Uppexo uppexoEngine({0, 0}, "offscreen rendering demo", true);
 
-  uppexo::Log::GetInstance().setLevel(uppexo::LOG_LEVEL_INFO);
+  //uppexo::Log::GetInstance().setLevel(uppexo::LOG_LEVEL_INFO);
 
   auto device = uppexoEngine.addDevice();
   auto graphicQueue = device.addQueue(uppexo::graphic);
@@ -140,4 +140,6 @@ int main(void) {
   synchronizer.getComponent().waitForFence({frame}, true);
   image.getComponent().exportImageToFile(
       "lol.png", commandBuffer.getComponent(), buffer.getComponent(), 0, 0);
+
+  uppexoEngine.deleteComponent(image);
 }

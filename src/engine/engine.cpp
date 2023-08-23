@@ -23,8 +23,14 @@ uppexo::Uppexo::Uppexo(VkExtent2D windowSize, std::string title,
 uppexo::Uppexo::~Uppexo() {
   uppexo::Log::GetInstance().logInfo("Shuting down uppexo engine\n");
   vkDeviceWaitIdle(getComponent<Device>(1).getLogicalDevice());
+  int x = componentList.size() - 1;
   std::for_each(componentList.rbegin(), componentList.rend(),
-                [](std::unique_ptr<void, void (*)(void *)> &i) { i.reset(); });
+                [&](std::unique_ptr<void, void (*)(void *)> &i) {
+                  if (!isComponentDeleted[x]) {
+                    i.reset();
+                  }
+                  x--;
+                });
 }
 
 TrackedBlueprint<uppexo::BufferBlueprint>

@@ -39,7 +39,8 @@ public:
            TrackedBlueprint<BufferBlueprint> &buffer);
   TrackedBlueprint<FramebufferBlueprint>
   addFrameBuffer(TrackedBlueprint<DeviceBlueprint> &device,
-                 TrackedBlueprint<RenderpassBlueprint> &renderPass, VkExtent2D size = {0, 0});
+                 TrackedBlueprint<RenderpassBlueprint> &renderPass,
+                 VkExtent2D size = {0, 0});
   TrackedBlueprint<DescriptorSetBlueprint>
   addDescriptorSet(TrackedBlueprint<DeviceBlueprint> &device);
   TrackedBlueprint<GraphicPipelineBlueprint>
@@ -62,14 +63,27 @@ public:
     return *static_cast<T *>(componentList[id].get());
   };
 
+  void deleteComponentByID(int id) {
+    uppexo::Log::GetInstance().logVerbose("Explicitly deleting component %d\n",
+                                          id);
+    componentList[id].reset();
+    isComponentDeleted[id] = true;
+  }
+
+  template <typename T> void deleteComponent(TrackedBlueprint<T> &t) {
+    deleteComponentByID(t.componentID);
+  };
+
 private:
   // blueprint, component, dependency, completed?
   std::vector<std::unique_ptr<void, void (*)(void *)>> componentList;
+  std::vector<bool> isComponentDeleted;
   std::vector<Sequence> sequenceList;
 
   template <typename Ta, typename Tb> inline int addComponent(Tb &blueprint) {
     componentList.emplace_back(new Ta(blueprint),
                                [](void *p) { delete static_cast<Ta *>(p); });
+    isComponentDeleted.push_back(false);
     return componentList.size() - 1;
   }
 };
