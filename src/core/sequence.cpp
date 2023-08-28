@@ -1,5 +1,6 @@
 #include <core/command/general.hpp>
 #include <core/command/render.hpp>
+#include <core/command/transfer.hpp>
 #include <core/sequence.hpp>
 #include <utils/log.hpp>
 
@@ -80,3 +81,7 @@ template int uppexo::Sequence::add<uppexo::command::DispatchCompute>(
     uppexo::command::DispatchCompute cmd);
 template int uppexo::Sequence::add<uppexo::command::RenderGUI>(
     uppexo::command::RenderGUI cmd);
+template int uppexo::Sequence::add<uppexo::command::TransitionImageLayout>(
+    uppexo::command::TransitionImageLayout cmd);
+template int uppexo::Sequence::add<uppexo::command::CopyImageToBuffer>(
+    uppexo::command::CopyImageToBuffer cmd);

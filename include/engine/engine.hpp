@@ -78,6 +78,10 @@ public:
     deleteComponentByID(t.componentID);
   };
 
+  Sequence &getSequence(int id) {
+    return sequenceList[id];
+  }
+
 private:
   // blueprint, component, dependency, completed?
   std::vector<std::unique_ptr<void, void (*)(void *)>> componentList;
