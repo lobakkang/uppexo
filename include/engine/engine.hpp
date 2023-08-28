@@ -63,6 +63,10 @@ public:
     return *static_cast<T *>(componentList[id].get());
   };
 
+  template <typename T> void sequenceAddCommand(int id, T cmd) {
+    sequenceList[id].add(cmd);
+  }
+
   void deleteComponentByID(int id) {
     uppexo::Log::GetInstance().logVerbose("Explicitly deleting component %d\n",
                                           id);

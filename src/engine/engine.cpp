@@ -218,7 +218,7 @@ TrackedBlueprint<uppexo::GuiBlueprint> uppexo::Uppexo::addGui(
 }
 
 uppexo::Sequence &uppexo::Uppexo::addSequence() {
-  Sequence sequence;
+  Sequence sequence(sequenceList.size());
   sequenceList.push_back(sequence);
   return sequenceList[sequenceList.size() - 1];
 }

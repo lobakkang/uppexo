@@ -12,7 +12,7 @@
 namespace uppexo {
 class Sequence {
 public:
-  Sequence();
+  Sequence(int id) { this->id = id; };
   void record(CommandBuffer &commandBuffer, int id);
   void record(TrackedBlueprint<CommandBufferBlueprint> &commandBuffer, int id) {
     record(commandBuffer.getComponent(), id);
@@ -35,8 +35,10 @@ public:
   }
 
   template <typename Ta> int add(Ta cmd);
+  int getID() { return id; }
 
 private:
+  int id;
   std::vector<std::shared_ptr<command::Command>> sequence;
 };
 } // namespace uppexo
