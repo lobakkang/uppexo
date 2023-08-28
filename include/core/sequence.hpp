@@ -12,7 +12,10 @@
 namespace uppexo {
 class Sequence {
 public:
-  Sequence(int id) { this->id = id; };
+  Sequence(int id) {
+    this->id = id;
+    uppexo::Log::GetInstance().logInfo("Creating sequence\n");
+  };
   void record(CommandBuffer &commandBuffer, int id);
   void record(TrackedBlueprint<CommandBufferBlueprint> &commandBuffer, int id) {
     record(commandBuffer.getComponent(), id);

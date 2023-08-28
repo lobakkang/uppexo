@@ -3,10 +3,6 @@
 #include <core/sequence.hpp>
 #include <utils/log.hpp>
 
-uppexo::Sequence::Sequence() {
-  uppexo::Log::GetInstance().logInfo("Creating sequence\n");
-}
-
 void uppexo::Sequence::record(CommandBuffer &commandBuffer, int id) {
   for (std::shared_ptr<command::Command> seq : sequence) {
     seq->execute(commandBuffer.getBuffer(id));
