@@ -10,11 +10,11 @@ struct Material_T {
   vec3 ambient;
   vec3 diffuse;
   vec3 specular;
-  float shininess;
+  vec3 shininess;
 };
 
-layout(binding = 1) uniform MaterialObject {
-  Material_T material[3];
+layout(binding = 1, std430) buffer MaterialObject {
+  Material_T material[10];
 };
 
 void main() {
@@ -25,9 +25,11 @@ void main() {
 
   vec3 norm = normalize(fragNormal);
   vec3 lightDir = normalize(fragPos - lightPos);
-  float diff = dot(norm, lightDir);
+  float diff = max(0.0, dot(norm, lightDir));
   vec3 diffuse = diff * lightColour * material[fragMaterial].diffuse;
   
-  vec3 result = ambient * 0.1f ;//+ diffuse * 1.0f;
+  //vec3 result = ambient * 0.1f + diffuse * 0.1f;
+  //vec3 result = material[fragMaterial].ambient;
+  vec3 result = material[1].ambient;
   outColor = vec4(result, 1.0f);
 }

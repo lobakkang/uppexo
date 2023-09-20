@@ -38,7 +38,7 @@ struct Material {
   glm::vec3 ambient;
   glm::vec3 diffuse;
   glm::vec3 specular;
-  glm::float32 shininess;
+  glm::vec3 shininess;
 };
 
 struct PhongVertex {

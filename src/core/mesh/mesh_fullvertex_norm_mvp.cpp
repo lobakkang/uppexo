@@ -42,7 +42,7 @@ void uppexo::Mesh<uppexo::FullVertex, uppexo::MVP_with_normalized_matrix>::
     mat.specular[1] = material.specular[1];
     mat.specular[2] = material.specular[2];
 
-    mat.shininess = material.shininess;
+    mat.shininess[0] = material.shininess;
 
     MaterialList.push_back(mat);
   }

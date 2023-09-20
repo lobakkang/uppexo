@@ -19,7 +19,7 @@ void main() {
     gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0);
 
     fragPos = vec3(ubo.model * vec4(inPosition, 1.0f));
-    //fragNormal = ubo.norm_model * inNormal;
-    fragNormal = inNormal;
+    //fragNormal = vec3(vec4(inNormal, 1.0f));
+    fragNormal = vec3(ubo.model * vec4(inNormal, 1.0f));
     fragMaterial = inMaterial;
 }

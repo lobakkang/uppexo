@@ -30,19 +30,21 @@ void uppexo::Mesh<uppexo::PhongVertex, uppexo::MVP_with_normalized_matrix>::
 
   for (const auto &material : materials) {
     Material mat;
-    mat.ambient[0] = material.ambient[0];
-    mat.ambient[1] = material.ambient[1];
-    mat.ambient[2] = material.ambient[2];
+    mat.ambient.r = 0.0f;//material.ambient.b;
+    mat.ambient.g = 1.0f;//material.ambient[1];
+    mat.ambient.b = 1.0f;//material.ambient.r;
 
-    mat.diffuse[0] = material.diffuse[0];
-    mat.diffuse[1] = material.diffuse[1];
-    mat.diffuse[2] = material.diffuse[2];
+    mat.diffuse.r = 1.0f; // material.diffuse.b;
+    mat.diffuse.g = 1.0f;    // material.diffuse[1];
+    mat.diffuse.b = 0;    // material.diffuse.r;
 
-    mat.specular[0] = material.specular[1];
-    mat.specular[1] = material.specular[1];
-    mat.specular[2] = material.specular[1];
+    mat.specular.r = 1.0f;//material.specular.g;
+    mat.specular.g = 0;//material.specular[1];
+    mat.specular.b = 1.0f;//material.specular.g;
 
-    mat.shininess = material.shininess;
+    mat.shininess.r = material.shininess;
+    mat.shininess.g = material.shininess;
+    mat.shininess.b = material.shininess;
 
     MaterialList.push_back(mat);
   }
@@ -63,6 +65,7 @@ void uppexo::Mesh<uppexo::PhongVertex, uppexo::MVP_with_normalized_matrix>::
       vertex.uv[1] = 1.0f - attrib.texcoords[index.texcoord_index * 2 + 1];
 
       vertex.mat = shape.mesh.material_ids[i];
+      //uppexo::Log::GetInstance().logVerbose("MAT: %i", vertex.mat);
 
       if (uniqueVertex.count(vertex) == 0) {
         uniqueVertex[vertex] = static_cast<uint32_t>(vertexList.size());
@@ -75,7 +78,8 @@ void uppexo::Mesh<uppexo::PhongVertex, uppexo::MVP_with_normalized_matrix>::
   uppexo::Log::GetInstance().logVerbose(
       "%i unique vertex is loaded with %i vertex indices\n", vertexList.size(),
       indexList.size());
-
+  uppexo::Log::GetInstance().logVerbose("%i Material is loaded\n",
+                                        MaterialList.size());
   MVPList.push_back((MVP_with_normalized_matrix){});
   meshCount++;
 }
