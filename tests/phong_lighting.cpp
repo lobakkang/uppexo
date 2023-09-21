@@ -109,7 +109,8 @@ int main(void) {
   buffer.getComponent().copyByMapping(vertexBuffer, mesh.getVertexList(),
                                       mesh.getVertexCount() *
                                           sizeof(uppexo::PhongVertex));
-  buffer.getComponent().copyByStaging(indexBuffer, mesh.getIndexList(),
+  buffer.getComponent().copyByStaging(indexBuffer, commandBuffer.getComponent(),
+                                      mesh.getIndexList(),
                                       mesh.getIndexCount() * sizeof(uint32_t));
   buffer.getComponent().copyByMapping(materialBuffer, mesh.getMaterialList(),
                                       mesh.getMaterialCount() *

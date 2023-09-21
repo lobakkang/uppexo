@@ -152,6 +152,15 @@ inline void copyImageToBuffer(VkCommandBuffer commandBuffer, VkBuffer buffer,
                          &copyRegion);
 }
 
+inline void copyBufferToBuffer(VkCommandBuffer commandBuffer, VkBuffer src,
+                               VkBuffer dst, int size) {
+  VkBufferCopy copyRegion{};
+  copyRegion.srcOffset = 0; // Optional
+  copyRegion.dstOffset = 0; // Optional
+  copyRegion.size = size;
+  vkCmdCopyBuffer(commandBuffer, src, dst, 1, &copyRegion);
+}
+
 inline void bindGraphicPipeline(VkCommandBuffer commandbuffer,
                                 VkPipeline graphicPipeline) {
   vkCmdBindPipeline(commandbuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,

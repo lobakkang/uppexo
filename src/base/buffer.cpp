@@ -1,5 +1,7 @@
 #include <base/buffer.hpp>
+#include <core/commandBufferRecorder.hpp>
 #include <cstring>
+#include <iostream>
 #include <map>
 #include <utils/log.hpp>
 #include <utils/vulkan_util.hpp>
@@ -89,8 +91,16 @@ uppexo::Buffer::Buffer(uppexo::BufferBlueprint bufferBlueprint) {
   uppexo::Log::GetInstance().logVerbose("Memory allocation map:\n");
   uppexo::Log::GetInstance().logVerbose("ID - size(byte) - paired buffer\n");
   for (auto &pair : memoryMap) {
-    uppexo::Log::GetInstance().logVerbose("%i - %i -\n", pair.first,
+    uppexo::Log::GetInstance().logVerbose("%i - %i - ", pair.first,
                                           pair.second);
+    int i = 0;
+    for (auto buffer : bufferMemoryPairList) {
+      if (buffer == pair.first) {
+        std::cout << i << " ";
+      }
+      i++;
+    }
+    std::cout << std::endl;
   }
 
   uppexo::Log::GetInstance().logVerbose("Allocating device memory\n");
@@ -155,18 +165,26 @@ void uppexo::Buffer::copyOutByMapping(int id, void *data, unsigned int size,
   vkUnmapMemory(deviceHandle, memoryList[bufferMemoryPairList[id]]);
 }
 
-void uppexo::Buffer::copyByStaging(int id, void *data, unsigned int size,
+void uppexo::Buffer::copyByStaging(int id, CommandBuffer &commandBuffer,
+                                   void *data, unsigned int size,
                                    unsigned int offset) {
-  // uppexo::Log::GetInstance().logVerbose(
-  //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);
   void *mappedMemory;
-  vkMapMemory(deviceHandle, memoryList[cellList[id].location],
-              bufferOffsetList[id], size, 0, &mappedMemory);
+  vkMapMemory(deviceHandle, memoryList[bufferMemoryPairList[stagingBufferID]],
+              bufferOffsetList[stagingBufferID], size, 0, &mappedMemory);
   memcpy(static_cast<char *>(mappedMemory) + offset, data, size);
-  vkUnmapMemory(deviceHandle, memoryList[cellList[id].location]);
+  vkUnmapMemory(deviceHandle,
+                memoryList[bufferMemoryPairList[stagingBufferID]]);
+
+  VkCommandBuffer singleUseCommandBuffer =
+      commandBuffer.createSingleUseCommandBuffer();
+  uppexo::command::copyBufferToBuffer(singleUseCommandBuffer,
+                                      bufferList[stagingBufferID],
+                                      bufferList[id], size);
+  commandBuffer.submitSingleUseCommandBuffer(singleUseCommandBuffer);
 }
 
-void uppexo::Buffer::copyOutByStaging(int id, void *data, unsigned int size,
+void uppexo::Buffer::copyOutByStaging(int id, CommandBuffer &commandBuffer,
+                                      void *data, unsigned int size,
                                       unsigned int offset) {
   // uppexo::Log::GetInstance().logVerbose(
   //     "Copying memory, size: %i, offset: %i\n", size, bufferOffsetList[id]);

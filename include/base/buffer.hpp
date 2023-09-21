@@ -1,7 +1,9 @@
 #ifndef BUFFER_H_
 #define BUFFER_H_
 
+#include <base/commandbuffer.hpp>
 #include <base/device.hpp>
+
 #include <vulkan/vulkan_core.h>
 
 #define GLFW_INCLUDE_VULKAN
@@ -38,7 +40,8 @@ struct VBO_at_device : BufferCellBlueprint {
   VBO_at_device(int size) {
     this->size = size;
     this->location = ON_DEVICE_INVISIBLE_TO_HOST;
-    this->usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    this->usage = (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
+                                          VK_BUFFER_USAGE_TRANSFER_DST_BIT);
   }
 };
 
@@ -54,7 +57,8 @@ struct UBO_at_device : BufferCellBlueprint {
   UBO_at_device(int size) {
     this->size = size;
     this->location = ON_DEVICE_INVISIBLE_TO_HOST;
-    this->usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+    this->usage = (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT |
+                                          VK_BUFFER_USAGE_TRANSFER_DST_BIT);
   }
 };
 
@@ -62,7 +66,8 @@ struct IBO_at_device : BufferCellBlueprint {
   IBO_at_device(int size) {
     this->size = size;
     this->location = ON_DEVICE_INVISIBLE_TO_HOST;
-    this->usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+    this->usage = (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_INDEX_BUFFER_BIT |
+                                          VK_BUFFER_USAGE_TRANSFER_DST_BIT);
   }
 };
 
@@ -119,10 +124,10 @@ public:
                      unsigned int offset = 0);
   void copyOutByMapping(int id, void *data, unsigned int size,
                         unsigned int offset = 0);
-  void copyByStaging(int id, void *data, unsigned int size,
-                     unsigned int offset = 0);
-  void copyOutByStaging(int id, void *data, unsigned int size,
-                        unsigned int offset = 0);
+  void copyByStaging(int id, CommandBuffer &commandBuffer, void *data,
+                     unsigned int size, unsigned int offset = 0);
+  void copyOutByStaging(int id, CommandBuffer &commandBuffer, void *data,
+                        unsigned int size, unsigned int offset = 0);
   // void* mapBuffer(int id);
   // void demapBuffer(int id);
   VkBuffer &getBuffer(int id) { return bufferList[id]; }

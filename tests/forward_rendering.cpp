@@ -103,10 +103,11 @@ int main(void) {
   uppexo::Mesh<uppexo::FullVertex, uppexo::MVP> mesh;
   mesh.addMesh(room);
 
-  buffer.getComponent().copyByMapping(0, mesh.getVertexList(),
-                                      mesh.getVertexCount() *
-                                          sizeof(uppexo::FullVertex));
-  buffer.getComponent().copyByMapping(1, mesh.getIndexList(),
+  buffer.getComponent().copyByStaging(
+      0, commandBuffer.getComponent(), mesh.getVertexList(),
+      mesh.getVertexCount() * sizeof(uppexo::FullVertex));
+  buffer.getComponent().copyByStaging(1, commandBuffer.getComponent(),
+                                      mesh.getIndexList(),
                                       mesh.getIndexCount() * sizeof(uint32_t));
 
   auto sequence = uppexoEngine.addSequence();
