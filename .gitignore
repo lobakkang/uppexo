@@ -49,6 +49,7 @@ CTestTestfile.cmake
 forward_rendering
 compute_array
 offscreen_rendering
+phong_lighting
 
 CMakeFiles/*
 Makefile

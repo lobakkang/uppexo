@@ -34,7 +34,7 @@ int main(void) {
       buffer.addCell(uppexo::presetBufferCellBlueprint::UBO_at_host(
           sizeof(uppexo::MVP_with_normalized_matrix)));
   int materialBuffer =
-      buffer.addCell(uppexo::presetBufferCellBlueprint::SSBO_at_host(
+      buffer.addCell(uppexo::presetBufferCellBlueprint::UBO_at_host(
           sizeof(uppexo::Material) * 10));
   buffer.create();
 
@@ -72,14 +72,14 @@ int main(void) {
       0, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_vertex_shader(
              buffer, uniformBuffer0, sizeof(uppexo::MVP)));
   descriptorSet.addBinding(
-      0, uppexo::presetDescriptorSetBindingBlueprint::SSBO_at_fragment_shader(
+      0, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_fragment_shader(
              buffer, materialBuffer,
              mesh.getMaterialCount() * sizeof(uppexo::Material)));
   descriptorSet.addBinding(
       1, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_vertex_shader(
              buffer, uniformBuffer1, sizeof(uppexo::MVP)));
   descriptorSet.addBinding(
-      1, uppexo::presetDescriptorSetBindingBlueprint::SSBO_at_fragment_shader(
+      1, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_fragment_shader(
              buffer, materialBuffer,
              mesh.getMaterialCount() * sizeof(uppexo::Material)));
   descriptorSet.create();

@@ -13,23 +13,27 @@ struct Material_T {
   vec3 shininess;
 };
 
-layout(binding = 1, std430) buffer MaterialObject {
-  Material_T material[10];
+layout(binding = 1) uniform MaterialObject {
+  Material_T material[3];
 };
 
 void main() {
-  vec3 lightPos = vec3(0.0f, -8.0f, 0.0f);
+  vec3 lightPos = vec3(0.0f, 0.0f, -10.0f);
   vec3 lightColour = vec3(1.0f, 1.0f, 1.0f);
+  vec3 viewPos = vec3(3.0f, 3.0f, 3.0f);
 
   vec3 ambient = material[fragMaterial].ambient * lightColour;
 
   vec3 norm = normalize(fragNormal);
   vec3 lightDir = normalize(fragPos - lightPos);
-  float diff = max(0.0, dot(norm, lightDir));
-  vec3 diffuse = diff * lightColour * material[fragMaterial].diffuse;
+  float diff = max(dot(norm, lightDir), 0.0);
+  vec3 diffuse = lightColour * (diff * material[fragMaterial].diffuse);
+    
+  vec3 viewDir = normalize(fragPos - viewPos);
+  vec3 reflectDir = reflect(-lightDir, norm);  
+  float spec = pow(max(dot(viewDir, reflectDir), 0.0), material[fragMaterial].shininess.x);
+  vec3 specular = lightColour * (spec * material[fragMaterial].specular);
   
-  //vec3 result = ambient * 0.1f + diffuse * 0.1f;
-  //vec3 result = material[fragMaterial].ambient;
-  vec3 result = material[1].ambient;
+  vec3 result = ambient * 0.0f + diffuse * 1.0f + specular * 1.0f;
   outColor = vec4(result, 1.0f);
 }

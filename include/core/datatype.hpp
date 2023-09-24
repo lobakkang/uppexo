@@ -35,10 +35,10 @@ struct MVP_with_normalized_matrix {
 };
 
 struct Material {
-  glm::vec3 ambient;
-  glm::vec3 diffuse;
-  glm::vec3 specular;
-  glm::vec3 shininess;
+  alignas(16) glm::vec3 ambient;
+  alignas(16) glm::vec3 diffuse;
+  alignas(16) glm::vec3 specular;
+  alignas(16) glm::vec3 shininess;
 };
 
 struct PhongVertex {

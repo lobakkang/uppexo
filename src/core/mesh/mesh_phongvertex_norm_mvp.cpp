@@ -30,17 +30,17 @@ void uppexo::Mesh<uppexo::PhongVertex, uppexo::MVP_with_normalized_matrix>::
 
   for (const auto &material : materials) {
     Material mat;
-    mat.ambient.r = 0.0f;//material.ambient.b;
-    mat.ambient.g = 1.0f;//material.ambient[1];
-    mat.ambient.b = 1.0f;//material.ambient.r;
+    mat.ambient.r = material.ambient[0];
+    mat.ambient.g = material.ambient[1];
+    mat.ambient.b = material.ambient[2];
 
-    mat.diffuse.r = 1.0f; // material.diffuse.b;
-    mat.diffuse.g = 1.0f;    // material.diffuse[1];
-    mat.diffuse.b = 0;    // material.diffuse.r;
+    mat.diffuse.r = material.diffuse[0];
+    mat.diffuse.g = material.diffuse[1];
+    mat.diffuse.b = material.diffuse[2];
 
-    mat.specular.r = 1.0f;//material.specular.g;
-    mat.specular.g = 0;//material.specular[1];
-    mat.specular.b = 1.0f;//material.specular.g;
+    mat.specular.r = material.specular[0];
+    mat.specular.g = material.specular[1];
+    mat.specular.b = material.specular[2];
 
     mat.shininess.r = material.shininess;
     mat.shininess.g = material.shininess;
@@ -65,7 +65,7 @@ void uppexo::Mesh<uppexo::PhongVertex, uppexo::MVP_with_normalized_matrix>::
       vertex.uv[1] = 1.0f - attrib.texcoords[index.texcoord_index * 2 + 1];
 
       vertex.mat = shape.mesh.material_ids[i];
-      //uppexo::Log::GetInstance().logVerbose("MAT: %i", vertex.mat);
+      // uppexo::Log::GetInstance().logVerbose("MAT: %i", vertex.mat);
 
       if (uniqueVertex.count(vertex) == 0) {
         uniqueVertex[vertex] = static_cast<uint32_t>(vertexList.size());
