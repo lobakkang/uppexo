@@ -109,11 +109,12 @@ struct ImageBlueprint {
     this->commandBuffer = &commandBuffer;
   }
 
-  void addImageCell(ImageCellBlueprint image) {
+  int addImageCell(ImageCellBlueprint image) {
     if (image.format == VK_FORMAT_UNDEFINED) {
       image.format = uppexo::findDepthFormat(physicalDevice);
     }
     imageCellBlueprint.push_back(image);
+    return imageCellBlueprint.size() - 1;
   }
 };
 

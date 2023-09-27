@@ -50,6 +50,7 @@ forward_rendering
 compute_array
 offscreen_rendering
 phong_lighting
+deffered_render
 
 CMakeFiles/*
 Makefile
