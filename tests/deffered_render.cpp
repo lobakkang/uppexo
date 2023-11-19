@@ -1,7 +1,10 @@
 #include <chrono>
-#include <generated/forwardFragmentShader.h>
-#include <generated/forwardVertexShader.h>
 #include <thread>
+
+#include <generated/mrtVertex.h>
+#include <generated/mrtFragment.h>
+#include <generated/deferredVertex.h>
+#include <generated/deferredFragment.h>
 #include <uppexo.hpp>
 
 #include <core/gui.hpp>
@@ -29,13 +32,23 @@ int main(void) {
       uppexo::presetBufferCellBlueprint::UBO_at_host(sizeof(uppexo::MVP)));
   buffer.create();
 
-  auto renderPass = uppexoEngine.addRenderPass(device);
-  auto swapchainAttachment = renderPass.addAttachment(
-      uppexo::presetAttachmentBlueprint::SwapchainAttachment());
-  auto depthAttachment = renderPass.addAttachment(
+  auto offscreenRenderPass = uppexoEngine.addRenderPass(device);
+  auto albedoAttachment = offscreenRenderPass.addAttachment(
+      uppexo::presetAttachmentBlueprint::OffscreenAttachment(
+          VK_FORMAT_R8G8B8A8_SRGB));
+  auto normalAttachment = offscreenRenderPass.addAttachment(
+      uppexo::presetAttachmentBlueprint::OffscreenAttachment(
+          VK_FORMAT_R8G8B8A8_SRGB));
+  auto specularAttachment = offscreenRenderPass.addAttachment(
+      uppexo::presetAttachmentBlueprint::OffscreenAttachment(
+          VK_FORMAT_R8G8B8A8_SRGB));
+  auto depthAttachment = offscreenRenderPass.addAttachment(
       uppexo::presetAttachmentBlueprint::DepthAttachment());
-  renderPass.addSubpass({swapchainAttachment}, depthAttachment);
-  renderPass.create();
+  offscreenRenderPass.addSubpass({albedoAttachment, normalAttachment, specularAttachment}, depthAttachment);
+  offscreenRenderPass.create();
+
+  auto deferredRenderPass = uppexoEngine.addRenderPass(device);
+  deferredRenderPass.create();
 
   auto sampler = uppexoEngine.addSampler(device);
   sampler.addSampler();
@@ -66,11 +79,11 @@ int main(void) {
           {640, 480}));
   image.create();
 
-  auto displayFrameBuffer = uppexoEngine.addFrameBuffer(device, renderPass);
+  auto displayFrameBuffer = uppexoEngine.addFrameBuffer(device, offscreenRenderPass);
   displayFrameBuffer.addImageView(image, 1, 0);
   displayFrameBuffer.create();
 
-  auto offscreenFrameBuffer = uppexoEngine.addFrameBuffer(device, renderPass);
+  auto offscreenFrameBuffer = uppexoEngine.addFrameBuffer(device, offscreenRenderPass);
   offscreenFrameBuffer.addImageView(image, albedoImg, 0);
   offscreenFrameBuffer.addImageView(image, normalImg, 0);
   offscreenFrameBuffer.addImageView(image, specularImg, 0);
@@ -96,14 +109,23 @@ int main(void) {
           sampler, image, 0, 0, 0));
   descriptorSet.create();
 
-  auto graphicPipeline =
-      uppexoEngine.addGraphicPipeline(device, renderPass, descriptorSet);
-  graphicPipeline.addVertexShaderFromCode((char *)forwardVertexShader,
-                                          forwardVertexShader_size);
-  graphicPipeline.addFragmentShaderFromCode((char *)forwardFragmentShader,
-                                            forwardFragmentShader_size);
-  graphicPipeline.isDepthEnable = true;
-  graphicPipeline.create();
+  auto offscreenGraphicPipeline =
+      uppexoEngine.addGraphicPipeline(device, offscreenRenderPass, descriptorSet);
+  offscreenGraphicPipeline.addVertexShaderFromCode((char *)mrtVertex,
+                                          mrtVertex_size);
+  offscreenGraphicPipeline.addFragmentShaderFromCode((char *)mrtFragment,
+                                            mrtFragment_size);
+  offscreenGraphicPipeline.isDepthEnable = true;
+  offscreenGraphicPipeline.create();
+
+  auto deferredGraphicPipeline =
+      uppexoEngine.addGraphicPipeline(device, deferredRenderPass, descriptorSet);
+  deferredGraphicPipeline.addVertexShaderFromCode((char *)deferredVertex,
+                                          deferredVertex_size);
+  deferredGraphicPipeline.addFragmentShaderFromCode((char *)deferredFragment,
+                                            deferredFragment_size);
+  deferredGraphicPipeline.isDepthEnable = true;
+  deferredGraphicPipeline.create();
 
   auto synchronizer = uppexoEngine.addSynchronizer(device);
   synchronizer.addFence();
@@ -131,14 +153,14 @@ int main(void) {
 
   auto sequence = uppexoEngine.addSequence();
   sequence.add(uppexo::command::BeginRecorder());
-  sequence.add(uppexo::command::BeginRenderPass(renderPass, frameBuffer, device,
+  sequence.add(uppexo::command::BeginRenderPass(offscreenRenderPass, offscreenFrameBuffer, device,
                                                 imageIndex));
-  sequence.add(uppexo::command::BindGraphicPipeline(graphicPipeline));
+  sequence.add(uppexo::command::BindGraphicPipeline(offscreenGraphicPipeline));
   sequence.add(uppexo::command::BindVertexBuffer(buffer, vertexBuffer));
   sequence.add(uppexo::command::SetViewport(device));
   sequence.add(uppexo::command::SetScissor(device));
   sequence.add(uppexo::command::BindGraphicDescriptorSet(
-      descriptorSet, graphicPipeline, frame));
+      descriptorSet, offscreenGraphicPipeline, frame));
   sequence.add(
       uppexo::command::IndexedDraw(buffer, indexBuffer, mesh.getIndexCount()));
   sequence.add(uppexo::command::RenderGUI());
