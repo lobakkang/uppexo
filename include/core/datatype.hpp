@@ -41,6 +41,23 @@ struct Material {
   alignas(16) glm::vec3 shininess;
 };
 
+struct NullVertex {
+  static std::vector<VkVertexInputBindingDescription> getBindingDescription() {
+    VkVertexInputBindingDescription bindingDescription;
+    bindingDescription.binding = 0;
+    bindingDescription.stride = sizeof(NullVertex);
+    bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    return std::vector<VkVertexInputBindingDescription>({bindingDescription});
+  }
+
+  static std::vector<VkVertexInputAttributeDescription>
+  getAttributeDescriptions() {
+    return std::vector<VkVertexInputAttributeDescription>({});
+  }
+
+  bool operator==(const NullVertex &other) const { return true; }
+};
+
 struct PhongVertex {
   glm::vec3 pos;
   glm::vec3 normal;

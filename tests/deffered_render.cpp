@@ -30,6 +30,8 @@ int main(void) {
       uppexo::presetBufferCellBlueprint::UBO_at_host(sizeof(uppexo::MVP)));
   int uniformBuffer1 = buffer.addCell(
       uppexo::presetBufferCellBlueprint::UBO_at_host(sizeof(uppexo::MVP)));
+  int sceneBuffer = buffer.addCell(
+      uppexo::presetBufferCellBlueprint::UBO_at_host(sizeof(uppexo::MVP)));
   buffer.create();
 
   auto offscreenRenderPass = uppexoEngine.addRenderPass(device);
@@ -48,6 +50,11 @@ int main(void) {
   offscreenRenderPass.create();
 
   auto deferredRenderPass = uppexoEngine.addRenderPass(device);
+  auto swapchainAttachment = deferredRenderPass.addAttachment(
+      uppexo::presetAttachmentBlueprint::SwapchainAttachment());
+  auto deferredDepthAttachment = deferredRenderPass.addAttachment(
+      uppexo::presetAttachmentBlueprint::DepthAttachment());
+  deferredRenderPass.addSubpass({swapchainAttachment}, deferredDepthAttachment);
   deferredRenderPass.create();
 
   auto sampler = uppexoEngine.addSampler(device);
@@ -62,7 +69,7 @@ int main(void) {
   image.addImageCell(
       uppexo::presetImageCellBlueprint::TextureImageCellBlueprint(
           "./demo/viking_room.png"));
-  image.addImageCell(
+  int depthImage = image.addImageCell(
       uppexo::presetImageCellBlueprint::DepthImageCellBlueprint());
 
   int albedoImg = image.addImageCell(
@@ -79,11 +86,12 @@ int main(void) {
           {640, 480}));
   image.create();
 
-  auto displayFrameBuffer = uppexoEngine.addFrameBuffer(device, offscreenRenderPass);
-  displayFrameBuffer.addImageView(image, 1, 0);
+  auto displayFrameBuffer = uppexoEngine.addFrameBuffer(device, deferredRenderPass);
+  displayFrameBuffer.addImageView(image, depthImage, 0);
   displayFrameBuffer.create();
 
   auto offscreenFrameBuffer = uppexoEngine.addFrameBuffer(device, offscreenRenderPass);
+  offscreenFrameBuffer.imageView.resize(0);
   offscreenFrameBuffer.addImageView(image, albedoImg, 0);
   offscreenFrameBuffer.addImageView(image, normalImg, 0);
   offscreenFrameBuffer.addImageView(image, specularImg, 0);
@@ -101,12 +109,34 @@ int main(void) {
       uppexo::presetDescriptorSetBindingBlueprint::Sampler_at_fragment_shader(
           sampler, image, 0, 0, 0));
   descriptorSet.addBinding(
+      0,
+      uppexo::presetDescriptorSetBindingBlueprint::Sampler_at_fragment_shader(
+          sampler, image, 0, 0, 0));
+  descriptorSet.addBinding(
+      0,
+      uppexo::presetDescriptorSetBindingBlueprint::Sampler_at_fragment_shader(
+          sampler, image, 0, 0, 0));
+  descriptorSet.addBinding(
+      0, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_fragment_shader(
+             buffer, sceneBuffer, sizeof(uppexo::MVP)));
+  descriptorSet.addBinding(
       1, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_vertex_shader(
              buffer, uniformBuffer1, sizeof(uppexo::MVP)));
   descriptorSet.addBinding(
       1,
       uppexo::presetDescriptorSetBindingBlueprint::Sampler_at_fragment_shader(
           sampler, image, 0, 0, 0));
+  descriptorSet.addBinding(
+      1,
+      uppexo::presetDescriptorSetBindingBlueprint::Sampler_at_fragment_shader(
+          sampler, image, 0, 0, 0));
+  descriptorSet.addBinding(
+      1,
+      uppexo::presetDescriptorSetBindingBlueprint::Sampler_at_fragment_shader(
+          sampler, image, 0, 0, 0));
+  descriptorSet.addBinding(
+      1, uppexo::presetDescriptorSetBindingBlueprint::UBO_at_fragment_shader(
+             buffer, sceneBuffer, sizeof(uppexo::MVP)));
   descriptorSet.create();
 
   auto offscreenGraphicPipeline =
@@ -120,6 +150,7 @@ int main(void) {
 
   auto deferredGraphicPipeline =
       uppexoEngine.addGraphicPipeline(device, deferredRenderPass, descriptorSet);
+  deferredGraphicPipeline.setVertexType<uppexo::NullVertex>();
   deferredGraphicPipeline.addVertexShaderFromCode((char *)deferredVertex,
                                           deferredVertex_size);
   deferredGraphicPipeline.addFragmentShaderFromCode((char *)deferredFragment,
@@ -169,6 +200,8 @@ int main(void) {
 
   auto startTime = std::chrono::high_resolution_clock::now();
   auto endTime = std::chrono::high_resolution_clock::now();
+
+  return 1;
 
   while (uppexoEngine.isRunning()) {
     endTime = std::chrono::high_resolution_clock::now();

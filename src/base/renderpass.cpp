@@ -8,6 +8,7 @@ uppexo::Renderpass::Renderpass(RenderpassBlueprint renderpassBlueprint) {
 
   attachmentReference.clear();
   attachmentDescription.clear();
+  colourAttachmentCount = 0;
 
   uppexo::Log::GetInstance().logVerbose("Creating attachment\n");
   for (int i = 0; i < renderpassBlueprint.attachment.size(); i++) {
@@ -55,6 +56,7 @@ uppexo::Renderpass::Renderpass(RenderpassBlueprint renderpassBlueprint) {
     std::vector<VkAttachmentReference *> colourAttachment;
     for (int id : subpassBlueprint.colourAttachment) {
       colourAttachment.push_back(&attachmentReference[id]);
+      colourAttachmentCount++;
     }
     subpassDesc.pColorAttachments = colourAttachment[0];
 
@@ -65,6 +67,7 @@ uppexo::Renderpass::Renderpass(RenderpassBlueprint renderpassBlueprint) {
     subpassList.push_back(subpassDesc);
   }
 
+  //uppexo::Log::GetInstance().logInfo("CNT lol: %d\n", colourAttachmentCount);
   uppexo::Log::GetInstance().logVerbose("Creating subpass dependency\n");
 
   VkSubpassDependency dependency{};

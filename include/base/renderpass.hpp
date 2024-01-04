@@ -116,6 +116,7 @@ public:
 
   VkRenderPass getRenderPass();
   int getAttachmentCount();
+  int getColourAttachmentCount() {return colourAttachmentCount;}
 
 private:
   VkDevice deviceHandle;
@@ -123,6 +124,7 @@ private:
 
   std::vector<VkAttachmentDescription> attachmentDescription;
   std::vector<VkAttachmentReference> attachmentReference;
+  int colourAttachmentCount;
 };
 } // namespace uppexo
 

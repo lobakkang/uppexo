@@ -28,6 +28,7 @@ struct GraphicPipelineBlueprint {
   VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
   VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL;
   float lineWidth = 1.0f;
+  int colourAttachmentCount;
 
   char* VertexShaderCode;
   char* FragmentShaderCode;
@@ -43,6 +44,7 @@ struct GraphicPipelineBlueprint {
     this->device = device.getLogicalDevice();
     this->renderpass = renderpass.getRenderPass();
     this->descriptorSet = nullptr;
+    this->colourAttachmentCount = renderpass.getColourAttachmentCount();
   }
 
   GraphicPipelineBlueprint(Device &device, Renderpass &renderpass,
@@ -52,6 +54,7 @@ struct GraphicPipelineBlueprint {
     this->device = device.getLogicalDevice();
     this->renderpass = renderpass.getRenderPass();
     this->descriptorSet = &descriptor;
+    this->colourAttachmentCount = renderpass.getColourAttachmentCount();
   }
 
   template<typename T> void setVertexType();
