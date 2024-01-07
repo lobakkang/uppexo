@@ -18,46 +18,65 @@
 typedef int UppexoHandle;
 
 namespace uppexo {
+typedef TrackedBlueprint<DeviceBlueprint> TrkDeviceBlueprint;
+typedef TrackedBlueprint<BufferBlueprint> TrkBufferBlueprint;
+typedef TrackedBlueprint<SamplerBlueprint> TrkSamplerBlueprint;
+typedef TrackedBlueprint<CommandBufferBlueprint> TrkCommandBufferBlueprint;
+typedef TrackedBlueprint<RenderpassBlueprint> TrkRenderpassBlueprint;
+typedef TrackedBlueprint<GraphicPipelineBlueprint> TrkGraphicPipelineBlueprint;
+typedef TrackedBlueprint<DescriptorSetBlueprint> TrkDescriptorSetBlueprint;
+typedef TrackedBlueprint<GuiBlueprint> TrkGuiBlueprint;
+typedef TrackedBlueprint<SynchronizerBlueprint> TrkSynchronizerBlueprint;
+typedef TrackedBlueprint<ComputePipelineBlueprint> TrkComputePipelineBlueprint;
+typedef TrackedBlueprint<ImageBlueprint> TrkImageBlueprint;
+typedef TrackedBlueprint<FramebufferBlueprint> TrkFramebufferBlueprint;
+
+struct UppexoExecutionInfo {
+  int guiID = -1;
+};
+
 class Uppexo {
 public:
   Uppexo(VkExtent2D windowSize = {0, 0}, std::string title = "UPPEXO",
          bool validationLayer = false);
   ~Uppexo();
-  TrackedBlueprint<DeviceBlueprint> addDevice();
-  TrackedBlueprint<BufferBlueprint>
-  addBuffer(TrackedBlueprint<DeviceBlueprint> &device);
-  TrackedBlueprint<SamplerBlueprint>
-  addSampler(TrackedBlueprint<DeviceBlueprint> &device);
-  TrackedBlueprint<CommandBufferBlueprint>
-  addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device,
+
+  std::function<void(long)> preRender;
+  std::function<void(long, int)> onRender = {};
+  std::function<void(long)> postRender;
+
+  void setOnRenderFunc(std::function<void(long, int)> onRenderFunc);
+
+  TrkDeviceBlueprint addDevice();
+  TrkBufferBlueprint addBuffer(TrkDeviceBlueprint &device);
+  TrkSamplerBlueprint addSampler(TrkDeviceBlueprint &device);
+  TrkCommandBufferBlueprint
+  addCommandBuffer(TrkDeviceBlueprint &device,
                    std::tuple<QueueType, int> queue = {QueueType::graphic, 0});
-  TrackedBlueprint<RenderpassBlueprint>
-  addRenderPass(TrackedBlueprint<DeviceBlueprint> &device);
-  TrackedBlueprint<ImageBlueprint>
-  addImage(TrackedBlueprint<DeviceBlueprint> &device,
-           TrackedBlueprint<CommandBufferBlueprint> &commandBuffer,
-           TrackedBlueprint<BufferBlueprint> &buffer);
-  TrackedBlueprint<FramebufferBlueprint>
-  addFrameBuffer(TrackedBlueprint<DeviceBlueprint> &device,
-                 TrackedBlueprint<RenderpassBlueprint> &renderPass,
-                 VkExtent2D size = {0, 0});
-  TrackedBlueprint<DescriptorSetBlueprint>
-  addDescriptorSet(TrackedBlueprint<DeviceBlueprint> &device);
-  TrackedBlueprint<GraphicPipelineBlueprint>
-  addGraphicPipeline(TrackedBlueprint<DeviceBlueprint> &device,
-                     TrackedBlueprint<RenderpassBlueprint> &renderPass,
-                     TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet);
-  TrackedBlueprint<ComputePipelineBlueprint>
-  addComputePipeline(TrackedBlueprint<DeviceBlueprint> &device,
-                     TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet);
-  TrackedBlueprint<SynchronizerBlueprint>
-  addSynchronizer(TrackedBlueprint<DeviceBlueprint> &device);
-  TrackedBlueprint<GuiBlueprint>
-  addGui(TrackedBlueprint<DeviceBlueprint> &device,
-         TrackedBlueprint<CommandBufferBlueprint> &commandBuffer);
+  TrkRenderpassBlueprint addRenderPass(TrkDeviceBlueprint &device);
+  TrkImageBlueprint addImage(TrkDeviceBlueprint &device,
+                             TrkCommandBufferBlueprint &commandBuffer,
+                             TrkBufferBlueprint &buffer);
+  TrkFramebufferBlueprint addFrameBuffer(TrkDeviceBlueprint &device,
+                                         TrkRenderpassBlueprint &renderPass,
+                                         VkExtent2D size = {0, 0});
+  TrkDescriptorSetBlueprint addDescriptorSet(TrkDeviceBlueprint &device);
+  TrkGraphicPipelineBlueprint
+  addGraphicPipeline(TrkDeviceBlueprint &device,
+                     TrkRenderpassBlueprint &renderPass,
+                     TrkDescriptorSetBlueprint &descriptorSet);
+  TrkComputePipelineBlueprint
+  addComputePipeline(TrkDeviceBlueprint &device,
+                     TrkDescriptorSetBlueprint &descriptorSet);
+  TrkSynchronizerBlueprint addSynchronizer(TrkDeviceBlueprint &device);
+  TrkGuiBlueprint addGui(TrkDeviceBlueprint &device,
+                         TrkCommandBufferBlueprint &commandBuffer);
 
   Sequence &addSequence();
   bool isRunning();
+  void run(TrkGuiBlueprint &gui, TrkSynchronizerBlueprint &synchronizer,
+           TrkCommandBufferBlueprint &commandBuffer, TrkDeviceBlueprint &device,
+           Sequence &sequence, std::tuple<QueueType, int> queue);
 
   template <typename T> inline T &getComponent(int id) {
     return *static_cast<T *>(componentList[id].get());
@@ -78,9 +97,7 @@ public:
     deleteComponentByID(t.componentID);
   };
 
-  Sequence &getSequence(int id) {
-    return sequenceList[id];
-  }
+  Sequence &getSequence(int id) { return sequenceList[id]; }
 
 private:
   // blueprint, component, dependency, completed?

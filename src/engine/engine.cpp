@@ -1,5 +1,11 @@
+#include <chrono>
+#include <thread>
+
 #include <engine/engine.hpp>
 #include <vulkan/vulkan_core.h>
+
+#define IMAGE_AVAILABLE_SEMAPHORE 2
+#define RENDER_FINISH_SEMAPHORE 0
 
 uppexo::Uppexo::Uppexo(VkExtent2D windowSize, std::string title,
                        bool validationLayer) {
@@ -33,9 +39,9 @@ uppexo::Uppexo::~Uppexo() {
                 });
 }
 
-TrackedBlueprint<uppexo::BufferBlueprint>
-uppexo::Uppexo::addBuffer(TrackedBlueprint<DeviceBlueprint> &device) {
-  TrackedBlueprint<uppexo::BufferBlueprint> blueprint(
+uppexo::TrkBufferBlueprint
+uppexo::Uppexo::addBuffer(TrkDeviceBlueprint &device) {
+  uppexo::TrkBufferBlueprint blueprint(
       getComponent<Device>(device.componentID));
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
@@ -47,9 +53,9 @@ uppexo::Uppexo::addBuffer(TrackedBlueprint<DeviceBlueprint> &device) {
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::SamplerBlueprint>
-uppexo::Uppexo::addSampler(TrackedBlueprint<DeviceBlueprint> &device) {
-  TrackedBlueprint<uppexo::SamplerBlueprint> blueprint(
+uppexo::TrkSamplerBlueprint
+uppexo::Uppexo::addSampler(TrkDeviceBlueprint &device) {
+  uppexo::TrkSamplerBlueprint blueprint(
       getComponent<Device>(device.componentID));
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
@@ -61,9 +67,9 @@ uppexo::Uppexo::addSampler(TrackedBlueprint<DeviceBlueprint> &device) {
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::SynchronizerBlueprint>
-uppexo::Uppexo::addSynchronizer(TrackedBlueprint<DeviceBlueprint> &device) {
-  TrackedBlueprint<uppexo::SynchronizerBlueprint> blueprint(
+uppexo::TrkSynchronizerBlueprint
+uppexo::Uppexo::addSynchronizer(TrkDeviceBlueprint &device) {
+  uppexo::TrkSynchronizerBlueprint blueprint(
       getComponent<Device>(device.componentID));
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
@@ -75,10 +81,10 @@ uppexo::Uppexo::addSynchronizer(TrackedBlueprint<DeviceBlueprint> &device) {
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::CommandBufferBlueprint>
-uppexo::Uppexo::addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device,
+uppexo::TrkCommandBufferBlueprint
+uppexo::Uppexo::addCommandBuffer(TrkDeviceBlueprint &device,
                                  std::tuple<QueueType, int> queue) {
-  TrackedBlueprint<uppexo::CommandBufferBlueprint> blueprint(
+  uppexo::TrkCommandBufferBlueprint blueprint(
       getComponent<Device>(device.componentID), std::get<0>(queue));
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
@@ -90,9 +96,9 @@ uppexo::Uppexo::addCommandBuffer(TrackedBlueprint<DeviceBlueprint> &device,
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::RenderpassBlueprint>
-uppexo::Uppexo::addRenderPass(TrackedBlueprint<DeviceBlueprint> &device) {
-  TrackedBlueprint<uppexo::RenderpassBlueprint> blueprint(
+uppexo::TrkRenderpassBlueprint
+uppexo::Uppexo::addRenderPass(TrkDeviceBlueprint &device) {
+  uppexo::TrkRenderpassBlueprint blueprint(
       getComponent<Device>(device.componentID));
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
@@ -104,11 +110,11 @@ uppexo::Uppexo::addRenderPass(TrackedBlueprint<DeviceBlueprint> &device) {
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::ImageBlueprint> uppexo::Uppexo::addImage(
-    TrackedBlueprint<DeviceBlueprint> &device,
-    TrackedBlueprint<CommandBufferBlueprint> &commandBuffer,
-    TrackedBlueprint<BufferBlueprint> &buffer) {
-  TrackedBlueprint<uppexo::ImageBlueprint> blueprint(
+uppexo::TrkImageBlueprint
+uppexo::Uppexo::addImage(TrkDeviceBlueprint &device,
+                         TrkCommandBufferBlueprint &commandBuffer,
+                         TrkBufferBlueprint &buffer) {
+  uppexo::TrkImageBlueprint blueprint(
       getComponent<Device>(device.componentID),
       getComponent<Buffer>(buffer.componentID),
       getComponent<CommandBuffer>(commandBuffer.componentID));
@@ -122,9 +128,9 @@ TrackedBlueprint<uppexo::ImageBlueprint> uppexo::Uppexo::addImage(
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::DescriptorSetBlueprint>
-uppexo::Uppexo::addDescriptorSet(TrackedBlueprint<DeviceBlueprint> &device) {
-  TrackedBlueprint<uppexo::DescriptorSetBlueprint> blueprint(
+uppexo::TrkDescriptorSetBlueprint
+uppexo::Uppexo::addDescriptorSet(TrkDeviceBlueprint &device) {
+  uppexo::TrkDescriptorSetBlueprint blueprint(
       getComponent<Device>(device.componentID));
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
@@ -136,10 +142,11 @@ uppexo::Uppexo::addDescriptorSet(TrackedBlueprint<DeviceBlueprint> &device) {
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::FramebufferBlueprint> uppexo::Uppexo::addFrameBuffer(
-    TrackedBlueprint<DeviceBlueprint> &device,
-    TrackedBlueprint<RenderpassBlueprint> &renderPass, VkExtent2D extend) {
-  TrackedBlueprint<uppexo::FramebufferBlueprint> blueprint(
+uppexo::TrkFramebufferBlueprint
+uppexo::Uppexo::addFrameBuffer(TrkDeviceBlueprint &device,
+                               TrkRenderpassBlueprint &renderPass,
+                               VkExtent2D extend) {
+  uppexo::TrkFramebufferBlueprint blueprint(
       getComponent<Device>(device.componentID),
       getComponent<Renderpass>(renderPass.componentID), extend);
   blueprint.create = [this, &blueprint]() {
@@ -152,12 +159,11 @@ TrackedBlueprint<uppexo::FramebufferBlueprint> uppexo::Uppexo::addFrameBuffer(
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::GraphicPipelineBlueprint>
-uppexo::Uppexo::addGraphicPipeline(
-    TrackedBlueprint<DeviceBlueprint> &device,
-    TrackedBlueprint<RenderpassBlueprint> &renderPass,
-    TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet) {
-  TrackedBlueprint<uppexo::GraphicPipelineBlueprint> blueprint(
+uppexo::TrkGraphicPipelineBlueprint
+uppexo::Uppexo::addGraphicPipeline(TrkDeviceBlueprint &device,
+                                   TrkRenderpassBlueprint &renderPass,
+                                   TrkDescriptorSetBlueprint &descriptorSet) {
+  uppexo::TrkGraphicPipelineBlueprint blueprint(
       getComponent<Device>(device.componentID),
       getComponent<Renderpass>(renderPass.componentID),
       getComponent<DescriptorSet>(descriptorSet.componentID));
@@ -171,11 +177,10 @@ uppexo::Uppexo::addGraphicPipeline(
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::ComputePipelineBlueprint>
-uppexo::Uppexo::addComputePipeline(
-    TrackedBlueprint<DeviceBlueprint> &device,
-    TrackedBlueprint<DescriptorSetBlueprint> &descriptorSet) {
-  TrackedBlueprint<uppexo::ComputePipelineBlueprint> blueprint(
+uppexo::TrkComputePipelineBlueprint
+uppexo::Uppexo::addComputePipeline(TrkDeviceBlueprint &device,
+                                   TrkDescriptorSetBlueprint &descriptorSet) {
+  uppexo::TrkComputePipelineBlueprint blueprint(
       getComponent<Device>(device.componentID),
       getComponent<DescriptorSet>(descriptorSet.componentID));
   blueprint.create = [this, &blueprint]() {
@@ -188,9 +193,8 @@ uppexo::Uppexo::addComputePipeline(
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::DeviceBlueprint> uppexo::Uppexo::addDevice() {
-  TrackedBlueprint<uppexo::DeviceBlueprint> blueprint(
-      getComponent<Instance>(0));
+uppexo::TrkDeviceBlueprint uppexo::Uppexo::addDevice() {
+  uppexo::TrkDeviceBlueprint blueprint(getComponent<Instance>(0));
   blueprint.create = [this, &blueprint]() {
     blueprint.componentID = this->componentList.size();
     this->addComponent<Device>(blueprint);
@@ -201,10 +205,10 @@ TrackedBlueprint<uppexo::DeviceBlueprint> uppexo::Uppexo::addDevice() {
   return blueprint;
 }
 
-TrackedBlueprint<uppexo::GuiBlueprint> uppexo::Uppexo::addGui(
-    TrackedBlueprint<DeviceBlueprint> &device,
-    TrackedBlueprint<CommandBufferBlueprint> &commandBuffer) {
-  TrackedBlueprint<uppexo::GuiBlueprint> blueprint(
+uppexo::TrkGuiBlueprint
+uppexo::Uppexo::addGui(TrkDeviceBlueprint &device,
+                       TrkCommandBufferBlueprint &commandBuffer) {
+  uppexo::TrkGuiBlueprint blueprint(
       getComponent<Instance>(0), getComponent<Device>(device.componentID),
       getComponent<CommandBuffer>(commandBuffer.componentID));
   blueprint.create = [this, &blueprint]() {
@@ -226,4 +230,63 @@ uppexo::Sequence &uppexo::Uppexo::addSequence() {
 bool uppexo::Uppexo::isRunning() {
   glfwPollEvents();
   return !glfwWindowShouldClose(getComponent<Instance>(0).getWindow());
+}
+
+void uppexo::Uppexo::setOnRenderFunc(
+    std::function<void(long, int)> onRenderFunc) {
+  onRender = onRenderFunc;
+}
+
+void uppexo::Uppexo::run(TrkGuiBlueprint &gui,
+                         TrkSynchronizerBlueprint &synchronizer,
+                         TrkCommandBufferBlueprint &commandBuffer,
+                         TrkDeviceBlueprint &device, Sequence &sequence,
+                         std::tuple<QueueType, int> queue) {
+  auto startTime = std::chrono::high_resolution_clock::now();
+  auto endTime = std::chrono::high_resolution_clock::now();
+  static auto initTime = std::chrono::high_resolution_clock::now();
+
+  int frame = 0;
+  int imageIndex = 0;
+
+  uppexo::Log::GetInstance().logInfo("Rendering loop stared\n");
+  while (isRunning()) {
+    endTime = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                       endTime - startTime)
+                       .count();
+    long tick = std::chrono::duration_cast<std::chrono::milliseconds>(endTime -
+                                                                      initTime)
+                    .count();
+    startTime = endTime;
+
+    const int MAX_FRAME_RATE = 60;
+    const int MIN_FRAME_TIME = 1000 / MAX_FRAME_RATE;
+    if (elapsed < MIN_FRAME_TIME) {
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(MIN_FRAME_TIME - elapsed));
+    }
+
+    preRender(tick);
+    gui.getComponent().render();
+
+    synchronizer.getComponent().waitForFence({frame}, true);
+    imageIndex = uppexo::Present::getImage(device, synchronizer,
+                                           IMAGE_AVAILABLE_SEMAPHORE + frame);
+    onRender(tick, frame);
+
+    sequence.record(commandBuffer, frame);
+    sequence.execute(commandBuffer, frame, device, queue, synchronizer,
+                     {{IMAGE_AVAILABLE_SEMAPHORE + frame,
+                       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}},
+                     {RENDER_FINISH_SEMAPHORE + frame}, frame);
+
+    uppexo::Present::presentImage(device, synchronizer,
+                                  RENDER_FINISH_SEMAPHORE + frame, imageIndex);
+
+    postRender(tick);
+
+    frame++;
+    frame %= 2;
+  }
 }

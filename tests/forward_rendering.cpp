@@ -95,8 +95,8 @@ int main(void) {
   synchronizer.addSemaphore();
   synchronizer.create();
 
-  int imageIndex = 0;
-  int frame = 0;
+  // int imageIndex = 0;
+  //  int frame = 0;
 
   uppexo::MeshInfo room;
   room.path = "./demo/viking_room.obj";
@@ -126,38 +126,12 @@ int main(void) {
   sequence.add(uppexo::command::EndRenderPass());
   sequence.add(uppexo::command::EndRecorder());
 
-  auto startTime = std::chrono::high_resolution_clock::now();
-  auto endTime = std::chrono::high_resolution_clock::now();
-
-  while (uppexoEngine.isRunning()) {
-    endTime = std::chrono::high_resolution_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-                       endTime - startTime)
-                       .count();
-    startTime = endTime;
-
-    const int MAX_FRAME_RATE = 60;
-    const int MIN_FRAME_TIME = 1000 / MAX_FRAME_RATE;
-    if (elapsed < MIN_FRAME_TIME) {
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(MIN_FRAME_TIME - elapsed));
-    }
-
-    gui.getComponent().render();
-
-    synchronizer.getComponent().waitForFence({frame}, true);
-    imageIndex = uppexo::Present::getImage(device, synchronizer,
-                                           IMAGE_AVAILABLE_SEMAPHORE + frame);
-
-    static auto initTime = std::chrono::high_resolution_clock::now();
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(
-                     currentTime - initTime)
-                     .count();
-
+  uppexoEngine.preRender = [&](int tick) {};
+  uppexoEngine.onRender = [&](int tick, int frame) {
     uppexo::MVP ubo{};
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f),
-                            glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.model =
+        glm::rotate(glm::mat4(1.0f), (float)tick / 1000 * glm::radians(90.0f),
+                    glm::vec3(0.0f, 0.0f, 1.0f));
     ubo.view =
         glm::lookAt(glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f),
                     glm::vec3(0.0f, 0.0f, 1.0f));
@@ -171,17 +145,10 @@ int main(void) {
 
     buffer.getComponent().copyByMapping(
         2 + frame, mesh.getMVPList(), mesh.getMVPCount() * sizeof(uppexo::MVP));
+  };
+  uppexoEngine.postRender = [&](int tick) {};
 
-    sequence.record(commandBuffer, frame);
-    sequence.execute(commandBuffer, frame, device, graphicQueue, synchronizer,
-                     {{IMAGE_AVAILABLE_SEMAPHORE + frame,
-                       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}},
-                     {RENDER_FINISH_SEMAPHORE + frame}, frame);
-
-    uppexo::Present::presentImage(device, synchronizer,
-                                  RENDER_FINISH_SEMAPHORE + frame, imageIndex);
-
-    frame++;
-    frame %= 2;
-  }
+  uppexoEngine.run(gui, synchronizer, commandBuffer, device, sequence,
+                   graphicQueue);
+  return 0;
 }
