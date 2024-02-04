@@ -55,6 +55,8 @@ template int uppexo::Sequence::add<uppexo::command::BeginRecorder>(
     uppexo::command::BeginRecorder cmd);
 template int uppexo::Sequence::add<uppexo::command::BeginRenderPass>(
     uppexo::command::BeginRenderPass cmd);
+template int uppexo::Sequence::add<uppexo::command::BeginRenderPassWithCustomClearColour>(
+    uppexo::command::BeginRenderPassWithCustomClearColour cmd);
 template int uppexo::Sequence::add<uppexo::command::EndRecorder>(
     uppexo::command::EndRecorder cmd);
 template int uppexo::Sequence::add<uppexo::command::EndRenderPass>(

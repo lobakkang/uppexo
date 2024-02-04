@@ -70,14 +70,47 @@ public:
     this->format = image.getComponent().getFormat(imageCellID);
     this->oldLayout = oldLayout;
     this->newLayout = newLayout;
+
+    if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+        newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+      srcAccess = 0;
+      destAccess = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+      sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+      destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+    } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
+               newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+      srcAccess = VK_ACCESS_TRANSFER_WRITE_BIT;
+      destAccess = VK_ACCESS_SHADER_READ_BIT;
+
+      sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+      destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
+               newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+      srcAccess = VK_ACCESS_TRANSFER_READ_BIT;
+      destAccess = VK_ACCESS_SHADER_READ_BIT;
+
+      sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+      destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    } else {
+      uppexo::Log::GetInstance().logError("Unsupported layout transition!\n");
+    }
   }
 
-  TransitionImageLayout(Image &image, int imageCellID, int imageID,
-                        VkImageLayout oldLayout, VkImageLayout newLayout) {
-    this->image = image.getImage(imageCellID)[imageID];
-    this->format = image.getFormat(imageCellID);
+  TransitionImageLayout(TrackedBlueprint<ImageBlueprint> &image,
+                        int imageCellID, int imageID, VkImageLayout oldLayout,
+                        VkImageLayout newLayout, VkAccessFlags srcAccess,
+                        VkAccessFlags destAccess,
+                        VkPipelineStageFlags sourceStage,
+                        VkPipelineStageFlags destinationStage) {
+    this->image = image.getComponent().getImage(imageCellID)[imageID];
+    this->format = image.getComponent().getFormat(imageCellID);
     this->oldLayout = oldLayout;
     this->newLayout = newLayout;
+    this->srcAccess = srcAccess;
+    this->destAccess = destAccess;
+    this->sourceStage = sourceStage;
+    this->destinationStage = destinationStage;
   }
 
   void execute(VkCommandBuffer commandbuffer) override {
@@ -93,35 +126,11 @@ public:
     barrier.subresourceRange.levelCount = 1;
     barrier.subresourceRange.baseArrayLayer = 0;
     barrier.subresourceRange.layerCount = 1;
+    barrier.srcAccessMask = srcAccess;
+    barrier.dstAccessMask = destAccess;
 
-    VkPipelineStageFlags sourceStage;
-    VkPipelineStageFlags destinationStage;
-
-    if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
-        newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-      barrier.srcAccessMask = 0;
-      barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
-      sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-      destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
-               newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-      barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-      barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-      sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-      destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL &&
-               newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-      barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-      barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-      sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-      destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    } else {
-      uppexo::Log::GetInstance().logError("Unsupported layout transition!\n");
-    }
-
+    barrier.srcAccessMask = 0;
+    barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
     vkCmdPipelineBarrier(commandbuffer, sourceStage, destinationStage, 0, 0,
                          nullptr, 0, nullptr, 1, &barrier);
   }
@@ -131,6 +140,10 @@ private:
   VkFormat format;
   VkImageLayout oldLayout;
   VkImageLayout newLayout;
+  VkAccessFlags srcAccess;
+  VkAccessFlags destAccess;
+  VkPipelineStageFlags sourceStage;
+  VkPipelineStageFlags destinationStage;
 
   uint32_t *imageWidth = 0;
   uint32_t *imageHeight = 0;

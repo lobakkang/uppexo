@@ -109,7 +109,7 @@ void uppexo::DescriptorSet::update() {
       if (bindingBlueprint.sampler != VK_NULL_HANDLE) {
         uppexo::Log::GetInstance().logVerbose("Updating texture binding\n");
         VkDescriptorImageInfo *imageInfo = new VkDescriptorImageInfo{};
-        imageInfo->imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        imageInfo->imageLayout = bindingBlueprint.textureLayout;
         imageInfo->imageView = bindingBlueprint.texture;
         imageInfo->sampler = bindingBlueprint.sampler;
         writeDescriptorSet.pImageInfo = imageInfo;

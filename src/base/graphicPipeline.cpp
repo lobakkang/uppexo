@@ -123,7 +123,6 @@ uppexo::GraphicPipeline::GraphicPipeline(
   depthStencil.stencilTestEnable = VK_FALSE;
 
   int colorAttachmentCount = pipelineBlueprint.colourAttachmentCount;
-  uppexo::Log::GetInstance().logInfo("CNT: %d\n", colorAttachmentCount);
   std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachment;
   for (int i = 0; i < colorAttachmentCount; i++) {
     colorBlendAttachment.push_back(

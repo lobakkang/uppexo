@@ -113,13 +113,13 @@ int main(void) {
   auto sequence = uppexoEngine.addSequence();
   sequence.add(uppexo::command::BeginRecorder());
   sequence.add(uppexo::command::BeginRenderPass(renderPass, frameBuffer, device,
-                                                imageIndex));
+                                                uppexoEngine.getImageIndex()));
   sequence.add(uppexo::command::BindGraphicPipeline(graphicPipeline));
   sequence.add(uppexo::command::BindVertexBuffer(buffer, vertexBuffer));
   sequence.add(uppexo::command::SetViewport(device));
   sequence.add(uppexo::command::SetScissor(device));
   sequence.add(uppexo::command::BindGraphicDescriptorSet(
-      descriptorSet, graphicPipeline, frame));
+      descriptorSet, graphicPipeline, uppexoEngine.getFrame()));
   sequence.add(
       uppexo::command::IndexedDraw(buffer, indexBuffer, mesh.getIndexCount()));
   sequence.add(uppexo::command::RenderGUI());

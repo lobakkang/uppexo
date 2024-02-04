@@ -67,7 +67,6 @@ uppexo::Renderpass::Renderpass(RenderpassBlueprint renderpassBlueprint) {
     subpassList.push_back(subpassDesc);
   }
 
-  //uppexo::Log::GetInstance().logInfo("CNT lol: %d\n", colourAttachmentCount);
   uppexo::Log::GetInstance().logVerbose("Creating subpass dependency\n");
 
   VkSubpassDependency dependency{};

@@ -60,7 +60,6 @@ struct FramebufferBlueprint {
   void addImageView(TrackedBlueprint<ImageBlueprint> &image, int imageId,
                     int id) {
     for (int i = 0; i < this->imageView.size(); i++) {
-      // this->imageView[i].push_back(image .getImageView(imageId)[id]);
       this->imageView[i].push_back(
           image.getComponent().getImageView(imageId)[id]);
     }

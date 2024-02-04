@@ -14,6 +14,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include <core/sequence.hpp>
+#include <core/renderdocCapture.hpp>
 
 typedef int UppexoHandle;
 
@@ -99,6 +100,9 @@ public:
 
   Sequence &getSequence(int id) { return sequenceList[id]; }
 
+  int &getFrame() { return frame; }
+  int &getImageIndex() { return imageIndex; }
+
 private:
   // blueprint, component, dependency, completed?
   std::vector<std::unique_ptr<void, void (*)(void *)>> componentList;
@@ -111,6 +115,9 @@ private:
     isComponentDeleted.push_back(false);
     return componentList.size() - 1;
   }
+
+  int frame = 0;
+  int imageIndex = 0;
 };
 } // namespace uppexo
 

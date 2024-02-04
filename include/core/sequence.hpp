@@ -6,6 +6,7 @@
 #include <core/command/compute.hpp>
 #include <core/command/general.hpp>
 #include <core/command/render.hpp>
+#include <core/command/transfer.hpp>
 #include <functional>
 #include <memory>
 

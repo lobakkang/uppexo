@@ -246,9 +246,6 @@ void uppexo::Uppexo::run(TrkGuiBlueprint &gui,
   auto endTime = std::chrono::high_resolution_clock::now();
   static auto initTime = std::chrono::high_resolution_clock::now();
 
-  int frame = 0;
-  int imageIndex = 0;
-
   uppexo::Log::GetInstance().logInfo("Rendering loop stared\n");
   while (isRunning()) {
     endTime = std::chrono::high_resolution_clock::now();

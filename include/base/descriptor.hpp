@@ -22,6 +22,7 @@ struct DescriptorSetBindingBlueprint {
   VkBuffer buffer;
   VkSampler sampler;
   VkImageView texture;
+  VkImageLayout textureLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
   int size;
 
   DescriptorSetBindingBlueprint() = default;
@@ -172,9 +173,14 @@ struct DescriptorSetBlueprint {
     this->device = device.getLogicalDevice();
   };
 
-  void addBinding(int set, DescriptorSetBindingBlueprint binding) {
+  int addBinding(int set, DescriptorSetBindingBlueprint binding) {
     this->binding.resize(std::max(set + 1, (int)this->binding.size()));
     this->binding[set].push_back(binding);
+    return this->binding[set].size() - 1;
+  }
+
+  void setBindingImageLayout(int set, int id, VkImageLayout layout) {
+    this->binding[set][id].textureLayout = layout;
   }
 };
 

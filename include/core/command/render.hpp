@@ -98,6 +98,59 @@ private:
   VkClearColorValue clearColour;
 };
 
+class BeginRenderPassWithCustomClearColour : public Command {
+public:
+  BeginRenderPassWithCustomClearColour(
+      TrackedBlueprint<RenderpassBlueprint> &renderPass,
+      TrackedBlueprint<FramebufferBlueprint> &framebuffer,
+      TrackedBlueprint<DeviceBlueprint> &device, int framebufferID,
+      std::vector<VkClearValue> clearValues)
+      : Command() {
+    this->renderpass = renderPass.getComponent().getRenderPass();
+    this->frameBuffer = &framebuffer.getComponent();
+    this->framebufferID = &framebufferID;
+    this->extend = device.getComponent().getSwapChainExtend();
+
+    this->clearValues = clearValues;
+  }
+
+  BeginRenderPassWithCustomClearColour(
+      TrackedBlueprint<RenderpassBlueprint> &renderPass,
+      TrackedBlueprint<FramebufferBlueprint> &framebuffer, VkExtent2D extend,
+      int &framebufferID, std::vector<VkClearValue> clearValues)
+      : Command() {
+    this->renderpass = renderPass.getComponent().getRenderPass();
+    this->frameBuffer = &framebuffer.getComponent();
+    this->extend = extend;
+    this->framebufferID = &framebufferID;
+
+    this->clearValues = clearValues;
+  }
+
+  void execute(VkCommandBuffer commandbuffer) override {
+    VkRenderPassBeginInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass = renderpass;
+    renderPassInfo.framebuffer = frameBuffer->getFramebuffer()[*framebufferID];
+    renderPassInfo.renderArea.offset = {0, 0};
+    renderPassInfo.renderArea.extent = extend;
+
+    renderPassInfo.clearValueCount = clearValues.size();
+    renderPassInfo.pClearValues = clearValues.data();
+
+    vkCmdBeginRenderPass(commandbuffer, &renderPassInfo,
+                         VK_SUBPASS_CONTENTS_INLINE);
+  }
+
+private:
+  VkRenderPass renderpass;
+  VkExtent2D extend;
+
+  Framebuffer *frameBuffer;
+  int *framebufferID;
+  std::vector<VkClearValue> clearValues;
+};
+
 class EndRenderPass : public Command {
 public:
   void execute(VkCommandBuffer commandbuffer) override {

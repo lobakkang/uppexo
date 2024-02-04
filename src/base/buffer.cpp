@@ -74,7 +74,6 @@ uppexo::Buffer::Buffer(uppexo::BufferBlueprint bufferBlueprint) {
               properties) {
         if (selectedIndex == -1) {
           selectedIndex = j;
-          uppexo::Log::GetInstance().logInfo("Memory : %d\n", j);
         }
       }
     }

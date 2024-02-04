@@ -39,6 +39,7 @@ public:
   ~Gui();
 
   void render();
+  std::function<void(void)> onRender;
 
 private:
   VkDevice device;

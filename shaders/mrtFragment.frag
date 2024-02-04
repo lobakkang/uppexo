@@ -1,7 +1,7 @@
 #version 450
 
-layout (binding = 1) uniform sampler2D samplerColor;
-layout (binding = 2) uniform sampler2D samplerNormalMap;
+layout (binding = 1) uniform sampler2D textureImage;
+// layout (binding = 2) uniform sampler2D samplerNormalMap;
 
 layout (location = 0) in vec3 inNormal;
 layout (location = 1) in vec2 inUV;
@@ -22,8 +22,9 @@ void main()
 	vec3 T = normalize(inTangent);
 	vec3 B = cross(N, T);
 	mat3 TBN = mat3(T, B, N);
-	vec3 tnorm = TBN * normalize(texture(samplerNormalMap, inUV).xyz * 2.0 - vec3(1.0));
+	//vec3 tnorm = TBN * normalize(texture(samplerNormalMap, inUV).xyz * 2.0 - vec3(1.0));
+  vec3 tnorm = N;
 	outNormal = vec4(tnorm, 1.0);
 
-	outAlbedo = texture(samplerColor, inUV);
+	outAlbedo = texture(textureImage, inUV);
 }

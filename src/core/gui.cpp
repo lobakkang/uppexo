@@ -65,6 +65,12 @@ uppexo::Gui::Gui(GuiBlueprint guiBlueprint) {
   ImGui_ImplVulkan_DestroyFontUploadObjects();
 
   this->device = guiBlueprint.device->getLogicalDevice();
+
+  this->onRender = []() {
+    ImGui::Begin("Hello, world!");
+    ImGui::Text("This is some useful text.");
+    ImGui::End();
+  };
 }
 
 uppexo::Gui::~Gui() {
@@ -82,8 +88,6 @@ void uppexo::Gui::render() {
   ImGui_ImplVulkan_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
-  ImGui::Begin("Hello, world!");
-  ImGui::Text("This is some useful text.");
-  ImGui::End();
+  onRender();
   ImGui::Render();
 }

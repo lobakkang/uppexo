@@ -32,7 +32,7 @@ namespace presetImageCellBlueprint {
 struct OffscreenRenderingImageCellBlueprint : ImageCellBlueprint {
   OffscreenRenderingImageCellBlueprint(VkExtent2D size) {
     aspect = VK_IMAGE_ASPECT_COLOR_BIT;
-    format = VK_FORMAT_R8G8B8A8_SRGB;
+    format = VK_FORMAT_R32G32B32A32_SFLOAT;
     location = ON_DEVICE_INVISIBLE_TO_HOST;
     this->size = size;
     usage =
@@ -115,6 +115,10 @@ struct ImageBlueprint {
     }
     imageCellBlueprint.push_back(image);
     return imageCellBlueprint.size() - 1;
+  }
+
+  void addImageUsage(int id, VkImageUsageFlags usage) {
+    imageCellBlueprint[id].usage |= usage;
   }
 };
 
