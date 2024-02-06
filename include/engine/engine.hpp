@@ -119,6 +119,8 @@ private:
   int frame = 0;
   int imageIndex = 0;
 };
+
+typedef std::shared_ptr<Uppexo> UppexoPtr;
 } // namespace uppexo
 
 #endif // !ENGINE_HPP_
